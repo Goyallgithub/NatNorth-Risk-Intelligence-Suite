@@ -124,7 +124,7 @@ def generate_synthetic_panel(n_smes: int = N_SMES, n_months: int = N_MONTHS, see
             )
 
     df = pd.DataFrame(rows)
-    # Account-level label noise (~5%) — some healthy SMEs look distressed and vice versa
+    # Account-level label noise (~5%): some healthy SMEs look distressed and vice versa
     sme_labels = df.groupby("sme_id")["distressed_within_6_months"].first()
     flip_ids = set(rng.choice(sme_labels.index.to_numpy(), size=max(1, int(0.05 * len(sme_labels))), replace=False))
     df.loc[df["sme_id"].isin(flip_ids), "distressed_within_6_months"] = (

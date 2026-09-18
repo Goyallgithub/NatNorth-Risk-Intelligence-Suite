@@ -91,7 +91,7 @@ export default function CategorizerPage() {
             </p>
             <div className="flex flex-wrap gap-1.5">
               {result.matchedTokens.length === 0 && (
-                <span className="text-xs text-natnorth-muted">No strong tokens yet — keep typing</span>
+                <span className="text-xs text-natnorth-muted">No strong tokens yet. Keep typing.</span>
               )}
               {result.matchedTokens.map((t) => (
                 <span
@@ -123,11 +123,11 @@ export default function CategorizerPage() {
 category* = argmax_c score_c
 confidence ≈ σ(score* − score_2nd)`}
         steps={[
-          "Offline we fit TfidfVectorizer (word 1–2 grams) + multinomial Logistic Regression.",
+          "Offline we fit TfidfVectorizer (word 1 to 2 grams) + multinomial Logistic Regression.",
           "We export top vocabulary tokens with per-class coefficients and keyword rules derived from merchant templates.",
           "In the browser, tokens present in your string add their class coefficients; keyword hits add a fixed boost.",
           "Predicted category is argmax over class scores; confidence comes from the top-2 margin.",
-          "This is an explainable approximation — full sparse TF-IDF lives in the Python training script / Colab.",
+          "This is an explainable approximation. Full sparse TF-IDF lives in the Python training script / Colab.",
         ]}
       />
 

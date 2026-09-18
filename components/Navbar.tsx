@@ -2,8 +2,6 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { motion } from "framer-motion";
-import { Shield } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const NAV = [
@@ -19,23 +17,14 @@ export function Navbar() {
   const pathname = usePathname();
 
   return (
-    <header className="sticky top-0 z-50 border-b border-natnorth-border/80 bg-white/80 backdrop-blur-xl">
-      <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3 sm:px-6 lg:px-8">
-        <Link href="/" className="group flex items-center gap-2.5">
-          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-natnorth-purple text-white shadow-md shadow-natnorth-purple/25 transition group-hover:scale-105">
-            <Shield className="h-5 w-5" strokeWidth={2.2} />
-          </span>
-          <div className="leading-tight">
-            <div className="font-display text-sm font-bold tracking-tight text-natnorth-purple">
-              NatNorth
-            </div>
-            <div className="text-[10px] font-medium uppercase tracking-[0.14em] text-natnorth-muted">
-              Risk Intelligence
-            </div>
-          </div>
+    <header className="poster-nav">
+      <div className="poster-nav__inner">
+        <Link href="/" className="poster-wordmark" aria-label="NatNorth home">
+          NAT<span>NORTH</span>
+          <small>RISK INTELLIGENCE</small>
         </Link>
 
-        <nav className="hidden items-center gap-1 md:flex">
+        <nav className="poster-nav__links" aria-label="Primary navigation">
           {NAV.map((item) => {
             const active =
               item.href === "/"
@@ -46,28 +35,20 @@ export function Navbar() {
                 key={item.href}
                 href={item.href}
                 className={cn(
-                  "relative rounded-lg px-3 py-2 text-sm font-medium transition-colors",
-                  active
-                    ? "text-natnorth-purple"
-                    : "text-natnorth-muted hover:text-natnorth-charcoal"
+                  "poster-nav__link",
+                  active && "is-active"
                 )}
               >
-                {active && (
-                  <motion.span
-                    layoutId="nav-pill"
-                    className="absolute inset-0 rounded-lg bg-natnorth-purple-soft"
-                    transition={{ type: "spring", stiffness: 380, damping: 30 }}
-                  />
-                )}
-                <span className="relative z-10">{item.label}</span>
+                {item.label}
               </Link>
             );
           })}
         </nav>
 
-        <div className="flex md:hidden">
+        <div className="poster-nav__mobile">
+          <label htmlFor="mobile-nav" className="sr-only">Navigate to</label>
           <select
-            className="rounded-lg border border-natnorth-border bg-white px-2 py-1.5 text-sm text-natnorth-charcoal"
+            id="mobile-nav"
             value={pathname}
             onChange={(e) => {
               window.location.href = e.target.value;

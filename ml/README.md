@@ -27,7 +27,7 @@ python sme_pulse.py        # → public/data/sme_pulse.json + public/datasets/sm
 
 ## Outputs
 
-- **JSON** in `public/data/` — metrics, curves, confusion matrices, feature importances, demo samples (consumed by the UI).
-- **CSV** in `public/datasets/` — full synthetic datasets (for Colab / interview walkthrough).
+- **JSON** in `public/data/`: metrics, curves, confusion matrices, feature importances and demo samples consumed by the UI.
+- **CSV** in `public/datasets/`: full synthetic datasets for the Colab / interview walkthrough.
 
 No live Python server is required at runtime. Retrain locally whenever you want fresh artifacts, then redeploy the static JSON.

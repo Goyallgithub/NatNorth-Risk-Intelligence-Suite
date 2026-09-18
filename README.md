@@ -1,14 +1,14 @@
 # NatNorth Risk Intelligence Suite
 
-A data science portfolio web app for a **NatWest-style data science interview**. It showcases classical ML on three real banking problems — not a GenAI chatbot wrapper.
+A data science portfolio web app for a **NatWest-style data science interview**. It showcases classical ML on three real banking problems, not a GenAI chatbot wrapper.
 
 **Live brand:** fictional bank **NatNorth** (deep purple `#5A287D`, charcoal, coral risk accents).
 
 ## The three problems
 
-1. **Payment Shield** — APP fraud detection under post–Oct 2024 reimbursement liability. Logistic Regression (explainable) + XGBoost (performance). Live client-side LR scoring + optional Voice Payment Check (Whisper + GPT-4o-mini linguistic risk).
-2. **Smart Categorizer** — noisy UK merchant strings → 10 categories. TF-IDF + Logistic Regression + TF-IDF + Random Forest.
-3. **SME Pulse** — early-warning distress from cash-flow features. Logistic Regression + Random Forest, with 12-month risk trajectories.
+1. **Payment Shield**: APP fraud detection under post-Oct 2024 reimbursement liability. Logistic Regression (explainable) + XGBoost (performance). Live client-side LR scoring + optional Voice Payment Check (Whisper + GPT-4o-mini linguistic risk).
+2. **Smart Categorizer**: noisy UK merchant strings → 10 categories. TF-IDF + Logistic Regression + TF-IDF + Random Forest.
+3. **SME Pulse**: early-warning distress from cash-flow features. Logistic Regression + Random Forest, with 12-month risk trajectories.
 
 ## Architecture
 
@@ -48,7 +48,7 @@ Open [http://localhost:3000](http://localhost:3000).
 
 1. Push repo → Import on Vercel
 2. Set env var `OPENAI_API_KEY` (required only for Voice Payment Check)
-3. Deploy — everything else is static
+3. Deploy. Everything else is static.
 
 ## Interview walkthrough
 
@@ -67,4 +67,4 @@ Open [http://localhost:3000](http://localhost:3000).
 
 ## Author
 
-**Bhavya Goyal** — CS undergrad, Codeforces Expert. Built to demonstrate feature engineering, imbalanced classification, explainability, and evaluation rigor.
+**Bhavya Goyal**: CS undergrad, Codeforces Expert. Built to demonstrate feature engineering, imbalanced classification, explainability and evaluation rigor.

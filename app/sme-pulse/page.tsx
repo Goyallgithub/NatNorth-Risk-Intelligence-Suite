@@ -53,7 +53,7 @@ export default function SmePulsePage() {
           <SectionTitle
             eyebrow="Trajectory demo"
             title="Monthly distress score"
-            subtitle="Pick an SME — red dashed line is the high-risk threshold (60)."
+            subtitle="Pick an SME. The red dashed line is the high-risk threshold (60)."
           />
           <select
             value={selected}
@@ -102,7 +102,7 @@ high_risk if distress_score ≥ 60`}
         steps={[
           "Models train on the month-12 snapshot per SME (account-level label: distressed_within_6_months).",
           "For trajectories, we apply the fitted LR (and RF) to each of the 12 monthly feature rows.",
-          "Score is the predicted probability × 100 — so you can watch risk climb before the terminal label.",
+          "Score is the predicted probability × 100, so you can watch risk climb before the terminal label.",
           "Threshold 60 is a policy choice for RM outreach; tune via precision-recall tradeoff on the PR curve.",
           "Features: monthly inflow/outflow, overdraft days, late supplier payments, 3m inflow volatility, cash runway.",
         ]}

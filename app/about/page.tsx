@@ -14,8 +14,8 @@ export default function AboutPage() {
         </h1>
         <p className="mt-3 max-w-2xl text-base leading-relaxed text-natnorth-muted">
           CS undergrad · Codeforces Expert. I built NatNorth Risk Intelligence Suite to
-          demonstrate applied ML thinking — feature engineering, imbalanced classification,
-          explainability, and evaluation rigor — against real banking problems, not just
+          demonstrate applied ML thinking: feature engineering, imbalanced classification,
+          explainability, and evaluation rigor against real banking problems, not just
           generative AI usage.
         </p>
       </div>
@@ -56,7 +56,7 @@ export default function AboutPage() {
           {[
             {
               t: "Imbalanced learning",
-              d: "APP fraud ~4% positive rate — class_weight / scale_pos_weight, PR-AUC as primary ranking metric.",
+              d: "APP fraud ~4% positive rate with class_weight / scale_pos_weight and PR-AUC as the primary ranking metric.",
             },
             {
               t: "Explainability",
@@ -72,7 +72,7 @@ export default function AboutPage() {
             },
             {
               t: "Evaluation literacy",
-              d: "ROC, PR, confusion matrices, stratified splits — documented on /evaluation.",
+              d: "ROC, PR, confusion matrices and stratified splits, documented on /evaluation.",
             },
             {
               t: "Product thinking",
@@ -97,7 +97,7 @@ export default function AboutPage() {
             <BookOpen className="h-5 w-5 text-natnorth-purple" />
             <h3 className="mt-3 font-display font-bold">Google Colab notebook</h3>
             <p className="mt-2 text-sm text-natnorth-muted">
-              Full training walkthrough with comments — upload{" "}
+              Full training walkthrough with comments. Upload{" "}
               <code className="rounded bg-natnorth-purple-soft px-1 text-xs">ml/NatNorth_ML_Colab.ipynb</code>
             </p>
           </Card>
@@ -105,7 +105,7 @@ export default function AboutPage() {
             <FileSpreadsheet className="h-5 w-5 text-natnorth-purple" />
             <h3 className="mt-3 font-display font-bold">Datasets (CSV)</h3>
             <p className="mt-2 text-sm text-natnorth-muted">
-              Synthetic sheets in <code className="rounded bg-natnorth-purple-soft px-1 text-xs">public/datasets/</code> — payment_shield, categorizer, sme_pulse.
+              Synthetic sheets in <code className="rounded bg-natnorth-purple-soft px-1 text-xs">public/datasets/</code>: payment_shield, categorizer and sme_pulse.
             </p>
             <div className="mt-3 flex flex-wrap gap-2 text-xs">
               <Link href="/datasets/payment_shield_dataset.csv" className="text-natnorth-purple underline">
@@ -125,7 +125,7 @@ export default function AboutPage() {
       <Card hover={false} className="bg-natnorth-purple text-white">
         <p className="text-sm text-white/70">Brand note</p>
         <p className="mt-1 font-display text-lg font-bold">
-          NatNorth is a fictional bank brand for this portfolio — visually echoing NatWest
+          NatNorth is a fictional bank brand for this portfolio, visually echoing NatWest
           (deep purple primary) without claiming affiliation.
         </p>
       </Card>

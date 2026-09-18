@@ -98,7 +98,7 @@ export default function PaymentShieldPage() {
           <SectionTitle
             eyebrow="Live scorer"
             title="Structural ML risk"
-            subtitle="Adjust features — probability updates instantly from exported LR coefficients."
+            subtitle="Adjust features. Probability updates instantly from exported LR coefficients."
           />
 
           <Field label={`Amount (£${features.transaction_amount.toFixed(0)})`}>
@@ -280,8 +280,8 @@ contribution_i = β_i · z_i`}
         steps={[
           "Each feature is standardised with the training-set mean (μ) and scale (σ) exported from StandardScaler.",
           "The linear predictor adds intercept β₀ to every coefficient × standardised feature.",
-          "Sigmoid maps the logit to a probability in [0,1]; we surface it as a 0–100 risk score.",
-          "Bars show contribution_i = β_i · z_i — positive pushes toward fraud (regulatory-friendly explainability).",
+          "Sigmoid maps the logit to a probability in [0,1]; we surface it as a 0 to 100 risk score.",
+          "Bars show contribution_i = β_i · z_i. Positive values push toward fraud (regulatory-friendly explainability).",
           "If voice is used: final = 0.6 × ML_score + 0.4 × linguistic_score (structural signal weighted higher).",
         ]}
       />

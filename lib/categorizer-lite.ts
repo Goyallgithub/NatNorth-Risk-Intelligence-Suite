@@ -31,7 +31,7 @@ export function categorizeDescription(
 } {
   const text = raw.toLowerCase().trim();
   if (!text) {
-    return { category: "—", confidence: 0, scores: [], matchedTokens: [] };
+    return { category: "N/A", confidence: 0, scores: [], matchedTokens: [] };
   }
 
   const categories = data.meta.categories;

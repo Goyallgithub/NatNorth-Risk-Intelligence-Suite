@@ -84,10 +84,10 @@ PR-AUC  = ∫ Precision d(Recall)   ← preferred under imbalance
 F1 = 2 · Precision · Recall / (Precision + Recall)`}
         steps={[
           "All tasks use stratified train/test splits so rare positive rates are preserved in both folds.",
-          "For fraud / distress we report PR-AUC alongside ROC-AUC — ROC can look optimistic when negatives dominate.",
+          "For fraud / distress we report PR-AUC alongside ROC-AUC because ROC can look optimistic when negatives dominate.",
           "Class imbalance is handled explicitly (class_weight or scale_pos_weight), not via naive accuracy chasing.",
           "Confusion matrices are shown raw (counts) so you can reason about false positives vs false negatives in business terms.",
-          "Interpretable baselines are kept even when ensembles win on AUC — banking decisions need audit trails.",
+          "Interpretable baselines are kept even when ensembles win on AUC because banking decisions need audit trails.",
         ]}
       />
 
@@ -103,7 +103,7 @@ F1 = 2 · Precision · Recall / (Precision + Recall)`}
           `Imbalance: ${paymentData.meta.class_imbalance_handling.logistic_regression}`,
           `Imbalance: ${paymentData.meta.class_imbalance_handling.xgboost}`,
         ]}
-        rationale="Logistic Regression was retained despite (sometimes) lower ensemble AUC because APP fraud decisions after the Oct-2024 reimbursement regime require coefficient-level explainability for regulatory review and customer challenge letters. XGBoost is the production-performance candidate: it captures interactions like new-payee × night-time × high spend z-score that a linear model misses. We optimise and report PR-AUC because a 3–4% positive rate makes accuracy and even ROC easy to game."
+        rationale="Logistic Regression was retained despite (sometimes) lower ensemble AUC because APP fraud decisions after the Oct-2024 reimbursement regime require coefficient-level explainability for regulatory review and customer challenge letters. XGBoost is the production-performance candidate: it captures interactions like new-payee × night-time × high spend z-score that a linear model misses. We optimise and report PR-AUC because a 3 to 4% positive rate makes accuracy and even ROC easy to game."
         table={
           <MetricsTable
             rows={[
@@ -165,7 +165,7 @@ F1 = 2 · Precision · Recall / (Precision + Recall)`}
           `Imbalance: ${smeData.meta.class_imbalance_handling.logistic_regression}`,
           `Imbalance: ${smeData.meta.class_imbalance_handling.random_forest}`,
         ]}
-        rationale="Credit committees challenge coefficient signs — 'does more overdraft usage really increase distress odds?' — so Logistic Regression is the governance-friendly model. Random Forest exists because cash-flow deterioration is interactive: short runway combined with high inflow volatility is worse than either alone. Training on the month-12 snapshot keeps evaluation at account level; trajectories then apply the fitted scorer month-by-month to show lead time before distress."
+        rationale="Credit committees challenge coefficient signs, such as whether more overdraft usage really increases distress odds. Logistic Regression is therefore the governance-friendly model. Random Forest exists because cash-flow deterioration is interactive: short runway combined with high inflow volatility is worse than either alone. Training on the month-12 snapshot keeps evaluation at account level; trajectories then apply the fitted scorer month-by-month to show lead time before distress."
         table={
           <MetricsTable
             rows={[
@@ -249,7 +249,7 @@ function ModuleBlock({
         )}
         {!hideCurves && pr && (
           <Card hover={false}>
-            <h3 className="mb-3 font-display font-bold">Precision–Recall curve</h3>
+            <h3 className="mb-3 font-display font-bold">Precision-Recall curve</h3>
             <PrChart curves={pr} />
           </Card>
         )}
