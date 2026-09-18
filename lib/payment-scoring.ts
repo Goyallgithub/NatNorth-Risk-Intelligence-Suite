@@ -1,17 +1,5 @@
 import { sigmoid } from "./utils";
 
-export type PaymentFeatures = {
-  transaction_amount: number;
-  recipient_is_new_payee: number;
-  hours_since_last_login: number;
-  time_of_day: number;
-  is_first_payment_to_recipient: number;
-  deviation_from_avg_transaction_zscore: number;
-  num_payments_today: number;
-  account_age_days: number;
-  is_international: number;
-};
-
 export type LrModelParams = {
   coefficients: Record<string, number>;
   intercept: number;
@@ -21,26 +9,24 @@ export type LrModelParams = {
 
 /**
  * Client-side Logistic Regression scoring using exported coefficients.
+ * Works for Kaggle credit-card features (Amount + V*) or any named feature map.
  *
- * Math:
- *   1. Standardize each feature: z_i = (x_i - mean_i) / scale_i
- *   2. Linear predictor: logit = intercept + sum(coef_i * z_i)
- *   3. Probability: p = sigmoid(logit) = 1 / (1 + e^(-logit))
- *   4. Risk score 0-100: round(p * 100)
- *
- * Feature contribution for explainability bar chart:
+ *   z_i = (x_i - mean_i) / scale_i
+ *   logit = intercept + Σ coef_i * z_i
+ *   p = sigmoid(logit)
  *   contribution_i = coef_i * z_i
- *   (positive pushes toward fraud; negative toward legitimate)
  */
 export function scorePaymentShield(
-  features: PaymentFeatures,
-  model: LrModelParams
+  features: Record<string, number>,
+  model: LrModelParams,
+  featureOrder?: string[]
 ): {
   probability: number;
   riskScore: number;
   logit: number;
   contributions: { feature: string; value: number; z: number; coef: number; contribution: number }[];
 } {
+  const keys = featureOrder ?? Object.keys(features);
   const contributions: {
     feature: string;
     value: number;
@@ -50,8 +36,10 @@ export function scorePaymentShield(
   }[] = [];
 
   let logit = model.intercept;
-  for (const [feature, value] of Object.entries(features) as [keyof PaymentFeatures, number][]) {
-    const mean = model.scaler_mean[feature];
+  for (const feature of keys) {
+    if (!(feature in features)) continue;
+    const value = features[feature];
+    const mean = model.scaler_mean[feature] ?? 0;
     const scale = model.scaler_scale[feature] || 1;
     const coef = model.coefficients[feature] ?? 0;
     const z = (value - mean) / scale;
@@ -70,10 +58,6 @@ export function scorePaymentShield(
   };
 }
 
-/**
- * Blend structural ML risk with linguistic voice risk.
- * Formula shown in UI: final = 0.6 * ml_score + 0.4 * linguistic_score
- */
 export function blendRiskScores(mlScore: number, linguisticScore: number) {
   const final = 0.6 * mlScore + 0.4 * linguisticScore;
   return {

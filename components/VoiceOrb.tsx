@@ -1,10 +1,8 @@
 "use client";
 
-import { useEffect, useRef, useState, useCallback } from "react";
-import { Mic, Square, Loader2 } from "lucide-react";
-import { motion } from "framer-motion";
+import { useCallback, useEffect, useRef, useState } from "react";
 
-type VoiceResult = {
+export type VoiceResult = {
   transcript: string;
   urgency_language: boolean;
   third_party_coaching_language: boolean;
@@ -15,226 +13,451 @@ type VoiceResult = {
   one_line_reasoning: string;
 };
 
-export function VoiceOrb({
-  onResult,
-}: {
-  onResult: (result: VoiceResult) => void;
-}) {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [recording, setRecording] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [volume, setVolume] = useState(0);
+type Bubble = { role: "assistant" | "user"; text: string };
+type Phase = "idle" | "listening" | "thinking" | "speaking";
 
+const OPENING =
+  "Hmm — hey. I'm NatNorth voice check. What payment are you trying to make?";
+
+function browserSpeak(text: string): Promise<void> {
+  return new Promise((resolve) => {
+    try {
+      if (typeof window === "undefined" || !window.speechSynthesis) {
+        resolve();
+        return;
+      }
+      window.speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(text);
+      u.rate = 0.98;
+      let settled = false;
+      const done = () => {
+        if (settled) return;
+        settled = true;
+        resolve();
+      };
+      u.onend = done;
+      u.onerror = done;
+      window.speechSynthesis.speak(u);
+      // Hard timeout so we never hang
+      setTimeout(done, Math.min(20000, 1500 + text.length * 60));
+    } catch {
+      resolve();
+    }
+  });
+}
+
+export function VoiceOrb({ onResult }: { onResult: (r: VoiceResult) => void }) {
+  const [phase, setPhase] = useState<Phase>("idle");
+  const [caption, setCaption] = useState("Tap the orb to start — I'll ask first.");
+  const [error, setError] = useState<string | null>(null);
+  const [level, setLevel] = useState(0);
+  const [score, setScore] = useState<number | null>(null);
+  const [booted, setBooted] = useState(false);
+
+  const history = useRef<Bubble[]>([]);
+  const phaseRef = useRef<Phase>("idle");
+  const alive = useRef(true);
+  const busy = useRef(false);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const audioUrlRef = useRef<string | null>(null);
   const mediaRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
+  const streamRef = useRef<MediaStream | null>(null);
   const audioCtxRef = useRef<AudioContext | null>(null);
   const analyserRef = useRef<AnalyserNode | null>(null);
-  const rafRef = useRef<number>(0);
-  const streamRef = useRef<MediaStream | null>(null);
-  const volumeRef = useRef(0);
+  const rafRef = useRef(0);
 
-  // Premium reactive orb animation
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
+  const setPhaseSafe = (p: Phase) => {
+    phaseRef.current = p;
+    if (alive.current) setPhase(p);
+  };
 
-    let t = 0;
-    const dpr = window.devicePixelRatio || 1;
-    const size = 220;
-    canvas.width = size * dpr;
-    canvas.height = size * dpr;
-    canvas.style.width = `${size}px`;
-    canvas.style.height = `${size}px`;
-    ctx.scale(dpr, dpr);
-
-    const draw = () => {
-      t += 0.02;
-      const vol = volumeRef.current;
-      const pulse = recording
-        ? 1 + vol * 0.55 + Math.sin(t * 2.2) * 0.04
-        : 1 + Math.sin(t) * 0.03;
-
-      ctx.clearRect(0, 0, size, size);
-      const cx = size / 2;
-      const cy = size / 2;
-
-      // Outer glow rings
-      for (let i = 3; i >= 1; i--) {
-        const r = 70 * pulse + i * 14 + vol * 20;
-        const g = ctx.createRadialGradient(cx, cy, r * 0.2, cx, cy, r);
-        g.addColorStop(0, `rgba(90,40,125,${0.18 - i * 0.04 + vol * 0.15})`);
-        g.addColorStop(1, "rgba(90,40,125,0)");
-        ctx.beginPath();
-        ctx.arc(cx, cy, r, 0, Math.PI * 2);
-        ctx.fillStyle = g;
-        ctx.fill();
+  const stopPlayback = () => {
+    try {
+      if (audioRef.current) {
+        audioRef.current.onended = null;
+        audioRef.current.onerror = null;
+        audioRef.current.pause();
+        audioRef.current.removeAttribute("src");
+        audioRef.current = null;
       }
-
-      // Morphing blob via layered circles
-      const baseR = 58 * pulse;
-      const grad = ctx.createRadialGradient(
-        cx - 12,
-        cy - 16,
-        8,
-        cx,
-        cy,
-        baseR * 1.2
-      );
-      grad.addColorStop(0, "#9B6BB8");
-      grad.addColorStop(0.45, "#5A287D");
-      grad.addColorStop(1, "#3D1A56");
-
-      ctx.beginPath();
-      for (let a = 0; a <= Math.PI * 2; a += 0.08) {
-        const wobble =
-          Math.sin(a * 3 + t * 1.4) * (4 + vol * 10) +
-          Math.cos(a * 5 - t * 1.1) * (3 + vol * 6);
-        const r = baseR + wobble;
-        const x = cx + Math.cos(a) * r;
-        const y = cy + Math.sin(a) * r;
-        if (a === 0) ctx.moveTo(x, y);
-        else ctx.lineTo(x, y);
+      if (audioUrlRef.current) {
+        URL.revokeObjectURL(audioUrlRef.current);
+        audioUrlRef.current = null;
       }
-      ctx.closePath();
-      ctx.fillStyle = grad;
-      ctx.shadowColor = `rgba(90,40,125,${0.45 + vol * 0.4})`;
-      ctx.shadowBlur = 28 + vol * 40;
-      ctx.fill();
-      ctx.shadowBlur = 0;
-
-      // Inner highlight
-      ctx.beginPath();
-      ctx.arc(cx - 14, cy - 18, 16, 0, Math.PI * 2);
-      ctx.fillStyle = "rgba(255,255,255,0.22)";
-      ctx.fill();
-
-      rafRef.current = requestAnimationFrame(draw);
-    };
-    draw();
-    return () => cancelAnimationFrame(rafRef.current);
-  }, [recording]);
+      window.speechSynthesis?.cancel();
+    } catch {
+      /* ignore */
+    }
+  };
 
   const stopTracks = () => {
-    streamRef.current?.getTracks().forEach((t) => t.stop());
-    streamRef.current = null;
-    audioCtxRef.current?.close().catch(() => {});
-    audioCtxRef.current = null;
+    try {
+      cancelAnimationFrame(rafRef.current);
+      streamRef.current?.getTracks().forEach((t) => {
+        try {
+          t.stop();
+        } catch {
+          /* ignore */
+        }
+      });
+      streamRef.current = null;
+      audioCtxRef.current?.close().catch(() => {});
+      audioCtxRef.current = null;
+      analyserRef.current = null;
+      mediaRef.current = null;
+      if (alive.current) setLevel(0);
+    } catch {
+      /* ignore */
+    }
   };
 
-  const startRecording = useCallback(async () => {
-    setError(null);
+  useEffect(() => {
+    alive.current = true;
+    return () => {
+      alive.current = false;
+      busy.current = false;
+      stopTracks();
+      stopPlayback();
+    };
+  }, []);
+
+  const speak = useCallback(async (text: string) => {
+    if (!text || !alive.current) return;
+    setPhaseSafe("speaking");
+    stopPlayback();
+
     try {
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), 20000);
+      const res = await fetch("/api/voice-speak", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text }),
+        signal: controller.signal,
+      });
+      clearTimeout(timer);
+
+      const type = res.headers.get("content-type") || "";
+      if (res.ok && type.includes("audio")) {
+        const blob = await res.blob();
+        if (blob.size > 0 && alive.current) {
+          const url = URL.createObjectURL(blob);
+          audioUrlRef.current = url;
+          const audio = new Audio(url);
+          audioRef.current = audio;
+          await new Promise<void>((resolve) => {
+            let settled = false;
+            const done = () => {
+              if (settled) return;
+              settled = true;
+              resolve();
+            };
+            audio.onended = done;
+            audio.onerror = done;
+            audio.play().catch(done);
+            setTimeout(done, 30000);
+          });
+          if (alive.current) setPhaseSafe("idle");
+          return;
+        }
+      }
+    } catch {
+      /* fall through to browser TTS */
+    }
+
+    await browserSpeak(text);
+    if (alive.current) setPhaseSafe("idle");
+  }, []);
+
+  const pushResult = (json: Record<string, unknown>, transcript?: string) => {
+    try {
+      const s = Math.max(0, Math.min(100, Number(json.overall_linguistic_risk_score) || 0));
+      if (alive.current) setScore(s);
+      onResult({
+        transcript: transcript || String(json.assistant_message || ""),
+        urgency_language: !!json.urgency_language,
+        third_party_coaching_language: !!json.third_party_coaching_language,
+        mentions_gift_card_or_crypto: !!json.mentions_gift_card_or_crypto,
+        mentions_remote_access: !!json.mentions_remote_access,
+        secrecy_language: !!json.secrecy_language,
+        overall_linguistic_risk_score: s,
+        one_line_reasoning: String(json.one_line_reasoning || json.assistant_message || ""),
+      });
+    } catch {
+      /* never crash parent */
+    }
+  };
+
+  const startSession = async () => {
+    if (busy.current || !alive.current) return;
+    busy.current = true;
+    setPhaseSafe("thinking");
+    if (alive.current) {
+      setError(null);
+      setCaption("Warming up…");
+    }
+    try {
+      const res = await fetch("/api/voice-chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ history: [], text: "" }),
+      });
+      const json = await res.json().catch(() => ({}));
+      const msg = String(json.assistant_message || OPENING);
+      history.current = [{ role: "assistant", text: msg }];
+      if (alive.current) {
+        setBooted(true);
+        setCaption(msg);
+        if (json.error) setError(String(json.error));
+      }
+      await speak(msg);
+    } catch {
+      history.current = [{ role: "assistant", text: OPENING }];
+      if (alive.current) {
+        setBooted(true);
+        setCaption(OPENING);
+        setError(null);
+      }
+      await speak(OPENING);
+    } finally {
+      busy.current = false;
+      if (alive.current && phaseRef.current !== "speaking") setPhaseSafe("idle");
+    }
+  };
+
+  const sendAudio = async (blob: Blob, mime: string) => {
+    if (busy.current) return;
+    busy.current = true;
+    setPhaseSafe("thinking");
+    if (alive.current) setCaption("Hmm — one second…");
+    try {
+      if (!blob || blob.size < 64) {
+        const msg = "Hmm — I didn't catch that. Tap and try again?";
+        if (alive.current) setCaption(msg);
+        await speak(msg);
+        return;
+      }
+      const fd = new FormData();
+      fd.append("audio", blob, `rec.${mime.includes("webm") ? "webm" : "mp4"}`);
+      fd.append(
+        "history",
+        JSON.stringify(history.current.map((b) => ({ role: b.role, content: b.text })))
+      );
+      const res = await fetch("/api/voice-chat", { method: "POST", body: fd });
+      const json = await res.json().catch(() => ({}));
+      const msg = String(json.assistant_message || "Okay — tell me a bit more?");
+      if (json.transcript) {
+        history.current.push({ role: "user", text: String(json.transcript) });
+      }
+      history.current.push({ role: "assistant", text: msg });
+      if (history.current.length > 16) history.current = history.current.slice(-16);
+      if (alive.current) setCaption(msg);
+      pushResult(json, json.transcript);
+      await speak(msg);
+    } catch {
+      const msg = "Hmm — glitch on my side. Tap the orb and say that again.";
+      if (alive.current) {
+        setCaption(msg);
+        setError(null);
+      }
+      await speak(msg);
+    } finally {
+      busy.current = false;
+      if (alive.current && phaseRef.current !== "speaking") setPhaseSafe("idle");
+    }
+  };
+
+  const startListening = async () => {
+    if (busy.current) return;
+    if (phaseRef.current === "thinking" || phaseRef.current === "speaking") return;
+    stopPlayback();
+    if (alive.current) setError(null);
+
+    if (!booted) {
+      await startSession();
+      return;
+    }
+
+    try {
+      if (!navigator.mediaDevices?.getUserMedia) {
+        if (alive.current) setError("This browser can't use the mic.");
+        return;
+      }
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      if (!alive.current) {
+        stream.getTracks().forEach((t) => t.stop());
+        return;
+      }
       streamRef.current = stream;
 
-      const audioCtx = new AudioContext();
-      audioCtxRef.current = audioCtx;
-      const source = audioCtx.createMediaStreamSource(stream);
-      const analyser = audioCtx.createAnalyser();
-      analyser.fftSize = 256;
-      source.connect(analyser);
-      analyserRef.current = analyser;
+      try {
+        const ctx = new AudioContext();
+        audioCtxRef.current = ctx;
+        const source = ctx.createMediaStreamSource(stream);
+        const analyser = ctx.createAnalyser();
+        analyser.fftSize = 256;
+        source.connect(analyser);
+        analyserRef.current = analyser;
+        const data = new Uint8Array(analyser.frequencyBinCount);
+        const poll = () => {
+          if (!analyserRef.current || !alive.current) return;
+          try {
+            analyserRef.current.getByteFrequencyData(data);
+            setLevel(data.reduce((a, b) => a + b, 0) / data.length / 255);
+          } catch {
+            /* ignore */
+          }
+          rafRef.current = requestAnimationFrame(poll);
+        };
+        poll();
+      } catch {
+        /* visualiser optional */
+      }
 
-      const data = new Uint8Array(analyser.frequencyBinCount);
-      const poll = () => {
-        if (!analyserRef.current) return;
-        analyserRef.current.getByteFrequencyData(data);
-        const avg = data.reduce((a, b) => a + b, 0) / data.length / 255;
-        volumeRef.current = avg;
-        setVolume(avg);
-        if (recording || mediaRef.current?.state === "recording") {
-          requestAnimationFrame(poll);
-        }
-      };
+      const mime = MediaRecorder.isTypeSupported("audio/webm;codecs=opus")
+        ? "audio/webm;codecs=opus"
+        : MediaRecorder.isTypeSupported("audio/webm")
+          ? "audio/webm"
+          : MediaRecorder.isTypeSupported("audio/mp4")
+            ? "audio/mp4"
+            : "";
 
-      const mime = MediaRecorder.isTypeSupported("audio/webm")
-        ? "audio/webm"
-        : "audio/mp4";
-      const recorder = new MediaRecorder(stream, { mimeType: mime });
+      const recorder = mime
+        ? new MediaRecorder(stream, { mimeType: mime })
+        : new MediaRecorder(stream);
       chunksRef.current = [];
       recorder.ondataavailable = (e) => {
-        if (e.data.size > 0) chunksRef.current.push(e.data);
+        if (e.data?.size > 0) chunksRef.current.push(e.data);
       };
-      recorder.onstop = async () => {
-        setLoading(true);
-        try {
-          const blob = new Blob(chunksRef.current, { type: mime });
-          const fd = new FormData();
-          fd.append("audio", blob, `recording.${mime.includes("webm") ? "webm" : "mp4"}`);
-          const res = await fetch("/api/voice-risk", { method: "POST", body: fd });
-          const json = await res.json();
-          if (!res.ok) throw new Error(json.error || "Voice analysis failed");
-          onResult(json as VoiceResult);
-        } catch (err) {
-          setError(err instanceof Error ? err.message : "Voice analysis failed");
-        } finally {
-          setLoading(false);
-          stopTracks();
-          volumeRef.current = 0;
-          setVolume(0);
-        }
+      recorder.onerror = () => {
+        stopTracks();
+        setPhaseSafe("idle");
+        if (alive.current) setError("Mic glitch — tap to try again.");
+      };
+      recorder.onstop = () => {
+        const type = recorder.mimeType || mime || "audio/webm";
+        const out = new Blob(chunksRef.current, { type });
+        stopTracks();
+        void sendAudio(out, type);
       };
       mediaRef.current = recorder;
-      recorder.start();
-      setRecording(true);
-      requestAnimationFrame(poll);
+      recorder.start(250);
+      setPhaseSafe("listening");
+      if (alive.current) setCaption("Listening… tap again when you're done.");
     } catch {
-      setError("Microphone access denied. Allow mic permissions to use Voice Payment Check.");
+      if (alive.current) {
+        setError("Allow the microphone, then tap the orb.");
+        setPhaseSafe("idle");
+      }
     }
-  }, [onResult, recording]);
-
-  const stopRecording = () => {
-    setRecording(false);
-    mediaRef.current?.stop();
   };
 
+  const stopListening = () => {
+    try {
+      if (mediaRef.current && mediaRef.current.state === "recording") {
+        mediaRef.current.stop();
+        setPhaseSafe("thinking");
+      } else {
+        stopTracks();
+        setPhaseSafe("idle");
+      }
+    } catch {
+      stopTracks();
+      setPhaseSafe("idle");
+    }
+  };
+
+  const onOrbClick = () => {
+    try {
+      if (phaseRef.current === "listening") stopListening();
+      else if (phaseRef.current === "idle") void startListening();
+    } catch {
+      setPhaseSafe("idle");
+    }
+  };
+
+  const pulse = phase === "listening" ? 1 + level * 0.55 : phase === "speaking" ? 1.08 : 1;
+  const status =
+    phase === "listening"
+      ? "Listening"
+      : phase === "thinking"
+        ? "Thinking"
+        : phase === "speaking"
+          ? "Speaking"
+          : "Tap to talk";
+
   return (
-    <div className="flex flex-col items-center gap-5">
-      <div className="relative">
-        <canvas ref={canvasRef} className="drop-shadow-xl" />
-        {loading && (
-          <div className="absolute inset-0 flex items-center justify-center">
-            <Loader2 className="h-8 w-8 animate-spin text-white drop-shadow" />
-          </div>
-        )}
-      </div>
-
-      <motion.button
-        whileTap={{ scale: 0.96 }}
-        onClick={recording ? stopRecording : startRecording}
-        disabled={loading}
-        className={`inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold text-white shadow-lg transition ${
-          recording
-            ? "bg-natnorth-coral shadow-natnorth-coral/30"
-            : "bg-natnorth-purple shadow-natnorth-purple/30 hover:bg-natnorth-purple-dark"
-        } disabled:opacity-60`}
+    <div className="flex h-full flex-col items-center justify-center gap-4">
+      <button
+        type="button"
+        onClick={onOrbClick}
+        disabled={phase === "thinking"}
+        aria-label={status}
+        className="group relative isolate flex h-[min(48vw,260px)] w-[min(48vw,260px)] items-center justify-center outline-none disabled:opacity-80 sm:h-[280px] sm:w-[280px]"
       >
-        {recording ? (
-          <>
-            <Square className="h-4 w-4 fill-current" /> Stop & Analyse
-          </>
-        ) : (
-          <>
-            <Mic className="h-4 w-4" /> Record Voice Check
-          </>
-        )}
-      </motion.button>
+        <span
+          className="absolute inset-[-28%] blur-3xl transition-all duration-500"
+          style={{
+            transform: `scale(${pulse})`,
+            opacity: phase === "listening" ? 0.9 : 0.65,
+            background:
+              phase === "listening"
+                ? "radial-gradient(circle, rgba(255,90,110,0.55), rgba(124,58,237,0.2) 45%, transparent 70%)"
+                : phase === "speaking"
+                  ? "radial-gradient(circle, rgba(94,242,255,0.5), rgba(124,58,237,0.25) 45%, transparent 70%)"
+                  : "radial-gradient(circle, rgba(167,139,250,0.55), rgba(94,242,255,0.18) 40%, transparent 70%)",
+          }}
+        />
+        <span
+          className="absolute inset-0 overflow-hidden shadow-[0_0_80px_rgba(124,58,237,0.45)] transition-transform duration-300"
+          style={{
+            borderRadius: "9999px",
+            transform: `scale(${pulse})`,
+            background:
+              "radial-gradient(circle at 32% 28%, #f5e9ff 0%, #c4b5fd 18%, #8b5cf6 42%, #5b21b6 68%, #1e0b3a 100%)",
+          }}
+        >
+          <span
+            className="absolute inset-[-20%]"
+            style={{
+              borderRadius: "9999px",
+              animation:
+                phase === "speaking"
+                  ? "orbSpin 4s linear infinite"
+                  : phase === "idle"
+                    ? "orbSpin 16s linear infinite"
+                    : "orbSpin 6s linear infinite",
+              background:
+                "conic-gradient(from 0deg, transparent 0%, rgba(255,255,255,0.35) 10%, transparent 22%, rgba(94,242,255,0.4) 40%, transparent 55%, rgba(255,77,94,0.35) 75%, transparent 90%)",
+              mixBlendMode: "screen",
+              opacity: 0.55,
+            }}
+          />
+          <span
+            className="absolute left-[18%] top-[16%] h-[28%] w-[34%] bg-white/50 blur-xl"
+            style={{ borderRadius: "9999px" }}
+          />
+        </span>
+        <span className="relative z-10 text-[10px] font-medium uppercase tracking-[0.28em] text-white drop-shadow">
+          {status}
+        </span>
+      </button>
 
-      {recording && (
-        <p className="text-xs text-natnorth-muted">
-          Listening… amplitude {(volume * 100).toFixed(0)}%
+      <p className="max-w-md px-4 text-center text-sm leading-relaxed text-white/80 sm:text-base">
+        {caption}
+      </p>
+
+      {score != null && (
+        <p className="text-[11px] uppercase tracking-[0.2em] text-[var(--bp-cyan)]">
+          Linguistic risk · {score}/100
         </p>
       )}
-      {error && (
-        <p className="max-w-sm text-center text-xs text-natnorth-coral">{error}</p>
-      )}
-      <p className="max-w-md text-center text-[11px] leading-relaxed text-natnorth-muted">
-        Speaks to OpenAI Whisper for transcription, then GPT-4o-mini extracts
-        linguistic coercion signals (urgency, gift-card/crypto, remote access,
-        secrecy, third-party coaching). Requires OPENAI_API_KEY.
+
+      {error && <p className="px-4 text-center text-xs text-[var(--bp-red)]">{error}</p>}
+
+      <p className="text-[10px] uppercase tracking-[0.18em] text-white/35">
+        {phase === "listening" ? "Tap orb to send" : "Tap orb · OpenAI voice"}
       </p>
     </div>
   );

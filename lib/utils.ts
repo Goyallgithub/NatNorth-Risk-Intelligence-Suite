@@ -17,10 +17,13 @@ export function riskBand(score0to100: number): {
   color: string;
   bg: string;
 } {
-  if (score0to100 < 25) return { label: "Low", color: "text-emerald-700", bg: "bg-emerald-50 border-emerald-200" };
-  if (score0to100 < 50) return { label: "Medium", color: "text-amber-700", bg: "bg-amber-50 border-amber-200" };
-  if (score0to100 < 75) return { label: "High", color: "text-orange-700", bg: "bg-orange-50 border-orange-200" };
-  return { label: "Critical", color: "text-natnorth-coral", bg: "bg-red-50 border-red-200" };
+  if (score0to100 < 25)
+    return { label: "Low", color: "text-[var(--bp-cyan)]", bg: "border-[var(--bp-cyan)]/40 bg-[var(--bp-cyan)]/5" };
+  if (score0to100 < 50)
+    return { label: "Medium", color: "text-white", bg: "border-white/30 bg-white/5" };
+  if (score0to100 < 75)
+    return { label: "High", color: "text-[var(--bp-red)]", bg: "border-[var(--bp-red)]/40 bg-[var(--bp-red)]/10" };
+  return { label: "Critical", color: "text-[var(--bp-red)]", bg: "border-[var(--bp-red)] bg-[var(--bp-red)]/15" };
 }
 
 export function sigmoid(z: number) {

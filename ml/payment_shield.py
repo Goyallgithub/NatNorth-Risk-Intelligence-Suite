@@ -1,20 +1,19 @@
 """
-Payment Shield - APP Fraud Detection Model Training
+Payment Shield — Credit Card Fraud (Kaggle / OpenML)
 ====================================================
-Generates a realistic synthetic Authorised Push Payment (APP) fraud dataset,
-trains Logistic Regression (interpretable baseline) and XGBoost (stronger model),
-evaluates with a full metric suite suitable for imbalanced fraud detection,
-and exports a static JSON artifact for the NatNorth frontend.
+Uses the famous ULB Credit Card Fraud Detection dataset
+(Kaggle: mlg-ulb/creditcardfraud · OpenML data_id=1597):
+284,807 European card transactions, ~0.172% fraud, PCA features V1–V28 + Amount.
 
-Why these models?
-- Logistic Regression: banking fraud decisions need coefficient-level explainability
-  for regulatory review (FCA / PSR reimbursement rules context). Coefficients map
-  directly to feature contributions -- interview-friendly and audit-ready.
-- XGBoost: captures non-linear interactions (e.g. new payee x night-time x high z-score)
-  that LR cannot. Used as the production-quality performance ceiling.
+Why this dataset?
+- Industry-standard imbalanced fraud benchmark.
+- Extreme class skew forces PR-AUC / recall thinking, not accuracy theatre.
 
-Class imbalance (~3-4% fraud): handled via class_weight='balanced' for LR and
-scale_pos_weight = n_neg/n_pos for XGBoost so the minority class is not ignored.
+Models:
+- Logistic Regression (class_weight='balanced') — audit-ready coefficients
+- XGBoost (scale_pos_weight) — non-linear performance ceiling
+
+Live UI exports Amount + top-|coef| PCA features for client-side LR scoring.
 """
 
 from __future__ import annotations
@@ -25,6 +24,7 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
+from sklearn.datasets import fetch_openml
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import (
     accuracy_score,
@@ -44,109 +44,33 @@ from xgboost import XGBClassifier
 warnings.filterwarnings("ignore")
 
 RANDOM_STATE = 42
-N_SAMPLES = 5000
-FRAUD_RATE = 0.035
+OPENML_ID = 1597
 OUTPUT_PATH = Path(__file__).resolve().parent.parent / "public" / "data" / "payment_shield.json"
-DATASET_CSV = Path(__file__).resolve().parent.parent / "public" / "datasets" / "payment_shield_dataset.csv"
-
-FEATURE_COLS = [
-    "transaction_amount",
-    "recipient_is_new_payee",
-    "hours_since_last_login",
-    "time_of_day",
-    "is_first_payment_to_recipient",
-    "deviation_from_avg_transaction_zscore",
-    "num_payments_today",
-    "account_age_days",
-    "is_international",
-]
+DATASET_CSV = Path(__file__).resolve().parent.parent / "public" / "datasets" / "creditcard_fraud_sample.csv"
+CACHE_CSV = Path(__file__).resolve().parent / "data" / "creditcard_openml.csv"
+N_LIVE_FEATURES = 8  # Amount + top PCA dims for the live scorer
+SAMPLE_ROWS = 25000
 
 
-def generate_synthetic_data(n: int = N_SAMPLES, fraud_rate: float = FRAUD_RATE, seed: int = RANDOM_STATE) -> pd.DataFrame:
-    """
-    Generate a realistic APP-fraud-like transaction dataset.
+def load_creditcard() -> pd.DataFrame:
+    CACHE_CSV.parent.mkdir(parents=True, exist_ok=True)
+    if CACHE_CSV.exists():
+        print(f"Loading cached dataset → {CACHE_CSV}")
+        return pd.read_csv(CACHE_CSV)
 
-    Strategy: draw a latent fraud flag at the target rate, then sample features
-    from class-conditional distributions with intentional overlap so models achieve
-    strong but not perfect discrimination (typically ROC-AUC ~0.88-0.94).
-    """
-    rng = np.random.default_rng(seed)
-    is_fraud = (rng.random(n) < fraud_rate).astype(int)
-    fraud = is_fraud == 1
-    legit = ~fraud
-    n_f, n_l = int(fraud.sum()), int(legit.sum())
-
-    transaction_amount = np.empty(n)
-    recipient_is_new_payee = np.empty(n, dtype=int)
-    hours_since_last_login = np.empty(n)
-    time_of_day = np.empty(n, dtype=int)
-    is_first_payment_to_recipient = np.empty(n, dtype=int)
-    deviation_from_avg_transaction_zscore = np.empty(n)
-    num_payments_today = np.empty(n, dtype=int)
-    account_age_days = np.empty(n)
-    is_international = np.empty(n, dtype=int)
-
-    # --- Fraud class-conditional draws ---
-    transaction_amount[fraud] = rng.lognormal(mean=6.2, sigma=0.8, size=n_f)
-    recipient_is_new_payee[fraud] = rng.binomial(1, 0.85, size=n_f)
-    hours_since_last_login[fraud] = rng.exponential(scale=2.0, size=n_f)
-    night = rng.random(n_f) < 0.72
-    time_of_day[fraud] = np.where(
-        night,
-        rng.choice([0, 1, 2, 3, 4, 5, 22, 23], size=n_f),
-        rng.integers(0, 24, size=n_f),
-    )
-    is_first_payment_to_recipient[fraud] = rng.binomial(1, 0.80, size=n_f)
-    deviation_from_avg_transaction_zscore[fraud] = rng.normal(2.6, 0.75, size=n_f)
-    num_payments_today[fraud] = rng.poisson(lam=4.8, size=n_f)
-    account_age_days[fraud] = rng.gamma(shape=1.6, scale=80, size=n_f)
-    is_international[fraud] = rng.binomial(1, 0.40, size=n_f)
-
-    # --- Legitimate class-conditional draws ---
-    transaction_amount[legit] = rng.lognormal(mean=4.2, sigma=0.85, size=n_l)
-    recipient_is_new_payee[legit] = rng.binomial(1, 0.10, size=n_l)
-    hours_since_last_login[legit] = rng.exponential(scale=18, size=n_l)
-    day = rng.random(n_l) < 0.8
-    time_of_day[legit] = np.where(
-        day,
-        rng.integers(8, 20, size=n_l),
-        rng.integers(0, 24, size=n_l),
-    )
-    is_first_payment_to_recipient[legit] = rng.binomial(1, 0.06, size=n_l)
-    deviation_from_avg_transaction_zscore[legit] = rng.normal(0.0, 0.8, size=n_l)
-    num_payments_today[legit] = rng.poisson(lam=1.0, size=n_l)
-    account_age_days[legit] = rng.gamma(shape=4.8, scale=210, size=n_l)
-    is_international[legit] = rng.binomial(1, 0.04, size=n_l)
-
-    transaction_amount = np.clip(transaction_amount, 5, 25000)
-    hours_since_last_login = np.clip(hours_since_last_login, 0.05, 720)
-    num_payments_today = np.clip(num_payments_today, 0, 25).astype(int)
-    account_age_days = np.clip(account_age_days, 3, 5000)
-
-    # ~1% label noise
-    flip = rng.random(n) < 0.01
-    is_fraud = np.where(flip, 1 - is_fraud, is_fraud)
-
-    return pd.DataFrame(
-        {
-            "transaction_amount": np.round(transaction_amount, 2),
-            "recipient_is_new_payee": recipient_is_new_payee.astype(int),
-            "hours_since_last_login": np.round(hours_since_last_login, 2),
-            "time_of_day": time_of_day.astype(int),
-            "is_first_payment_to_recipient": is_first_payment_to_recipient.astype(int),
-            "deviation_from_avg_transaction_zscore": np.round(deviation_from_avg_transaction_zscore, 3),
-            "num_payments_today": num_payments_today.astype(int),
-            "account_age_days": np.round(account_age_days, 1),
-            "is_international": is_international.astype(int),
-            "is_fraud": is_fraud.astype(int),
-        }
-    )
+    print(f"Downloading OpenML data_id={OPENML_ID} (Kaggle ULB Credit Card Fraud)…")
+    ds = fetch_openml(data_id=OPENML_ID, as_frame=True, parser="auto")
+    df = ds.frame.copy()
+    df["Class"] = df["Class"].astype(int)
+    df.to_csv(CACHE_CSV, index=False)
+    print(f"Cached → {CACHE_CSV} | shape={df.shape}")
+    return df
 
 
-def _curve_points(fpr_or_rec, tpr_or_prec, max_points: int = 80):
-    n = len(fpr_or_rec)
+def _curve_points(xs, ys, max_points: int = 80):
+    n = len(xs)
     idx = np.arange(n) if n <= max_points else np.linspace(0, n - 1, max_points).astype(int)
-    return [{"x": float(fpr_or_rec[i]), "y": float(tpr_or_prec[i])} for i in idx]
+    return [{"x": float(xs[i]), "y": float(ys[i])} for i in idx]
 
 
 def evaluate_binary(y_true, y_prob, y_pred, feature_names, importances) -> dict:
@@ -171,20 +95,29 @@ def evaluate_binary(y_true, y_prob, y_pred, feature_names, importances) -> dict:
 
 def train_and_export() -> dict:
     print("=" * 60)
-    print("Payment Shield - generating data and training models")
+    print("Payment Shield — Kaggle Credit Card Fraud (OpenML 1597)")
     print("=" * 60)
 
-    df = generate_synthetic_data()
+    df = load_creditcard()
+    feature_cols = [c for c in df.columns if c != "Class"]
+    X = df[feature_cols].values.astype(float)
+    y = df["Class"].values.astype(int)
+
+    # Stratified public sample CSV (all fraud + random legit)
+    fraud_idx = np.where(y == 1)[0]
+    legit_idx = np.where(y == 0)[0]
+    rng = np.random.default_rng(RANDOM_STATE)
+    n_legit = min(len(legit_idx), SAMPLE_ROWS - len(fraud_idx))
+    sample_idx = np.concatenate(
+        [fraud_idx, rng.choice(legit_idx, size=n_legit, replace=False)]
+    )
+    rng.shuffle(sample_idx)
     DATASET_CSV.parent.mkdir(parents=True, exist_ok=True)
-    df.to_csv(DATASET_CSV, index=False)
-    print(f"Dataset: {len(df)} rows | fraud rate: {df['is_fraud'].mean():.3%}")
-    print(f"Saved CSV -> {DATASET_CSV}")
+    df.iloc[sample_idx].to_csv(DATASET_CSV, index=False)
+    print(f"Interview sample CSV → {DATASET_CSV} ({len(sample_idx)} rows)")
 
-    X = df[FEATURE_COLS].values
-    y = df["is_fraud"].values
-
-    X_train, X_test, y_train, y_test, idx_train, idx_test = train_test_split(
-        X, y, df.index.values, test_size=0.25, random_state=RANDOM_STATE, stratify=y
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, test_size=0.25, random_state=RANDOM_STATE, stratify=y
     )
 
     scaler = StandardScaler()
@@ -200,16 +133,16 @@ def train_and_export() -> dict:
     lr.fit(X_train_s, y_train)
     lr_prob = lr.predict_proba(X_test_s)[:, 1]
     lr_pred = (lr_prob >= 0.5).astype(int)
-    lr_metrics = evaluate_binary(y_test, lr_prob, lr_pred, FEATURE_COLS, lr.coef_[0])
+    lr_metrics = evaluate_binary(y_test, lr_prob, lr_pred, feature_cols, lr.coef_[0])
 
     n_pos = max(int(y_train.sum()), 1)
     n_neg = len(y_train) - n_pos
     scale_pos_weight = n_neg / n_pos
 
     xgb = XGBClassifier(
-        n_estimators=220,
+        n_estimators=200,
         max_depth=5,
-        learning_rate=0.07,
+        learning_rate=0.08,
         subsample=0.9,
         colsample_bytree=0.9,
         min_child_weight=2,
@@ -222,67 +155,94 @@ def train_and_export() -> dict:
     xgb_prob = xgb.predict_proba(X_test)[:, 1]
     xgb_pred = (xgb_prob >= 0.5).astype(int)
     xgb_metrics = evaluate_binary(
-        y_test, xgb_prob, xgb_pred, FEATURE_COLS, xgb.feature_importances_
+        y_test, xgb_prob, xgb_pred, feature_cols, xgb.feature_importances_
     )
 
+    # Live scorer: Amount + top |LR coef| PCA features
+    coef_abs = {f: abs(float(c)) for f, c in zip(feature_cols, lr.coef_[0])}
+    ranked = sorted(coef_abs.keys(), key=lambda f: coef_abs[f], reverse=True)
+    live_features = []
+    if "Amount" in feature_cols:
+        live_features.append("Amount")
+    for f in ranked:
+        if f not in live_features:
+            live_features.append(f)
+        if len(live_features) >= N_LIVE_FEATURES:
+            break
+
+    # Defaults for live UI = medians of fraud class (more interesting demo)
+    fraud_df = df[df["Class"] == 1]
+    live_defaults = {f: float(fraud_df[f].median()) for f in live_features}
+    live_ranges = {
+        f: {
+            "min": float(np.percentile(df[f], 1)),
+            "max": float(np.percentile(df[f], 99)),
+            "step": 0.1 if f != "Amount" else 1.0,
+        }
+        for f in live_features
+    }
+
+    # Sample table from test set
     fraud_test = np.where(y_test == 1)[0]
     legit_test = np.where(y_test == 0)[0]
-    rng = np.random.default_rng(RANDOM_STATE)
     n_fraud_sample = min(8, len(fraud_test))
     n_legit_sample = 20 - n_fraud_sample
-    sample_idx = np.concatenate(
+    pick = np.concatenate(
         [
             rng.choice(fraud_test, n_fraud_sample, replace=False),
             rng.choice(legit_test, n_legit_sample, replace=False),
         ]
     )
-    rng.shuffle(sample_idx)
-
+    rng.shuffle(pick)
     samples = []
-    for i in sample_idx:
-        row = df.loc[idx_test[i]]
-        samples.append(
+    for i in pick:
+        row = {f: float(X_test[i, feature_cols.index(f)]) for f in live_features}
+        row.update(
             {
-                "transaction_amount": float(row["transaction_amount"]),
-                "recipient_is_new_payee": int(row["recipient_is_new_payee"]),
-                "hours_since_last_login": float(row["hours_since_last_login"]),
-                "time_of_day": int(row["time_of_day"]),
-                "is_first_payment_to_recipient": int(row["is_first_payment_to_recipient"]),
-                "deviation_from_avg_transaction_zscore": float(row["deviation_from_avg_transaction_zscore"]),
-                "num_payments_today": int(row["num_payments_today"]),
-                "account_age_days": float(row["account_age_days"]),
-                "is_international": int(row["is_international"]),
-                "true_label": int(row["is_fraud"]),
+                "true_label": int(y_test[i]),
                 "lr_probability": float(lr_prob[i]),
                 "xgb_probability": float(xgb_prob[i]),
             }
         )
+        samples.append(row)
 
     artifact = {
         "meta": {
             "task": "payment_shield",
+            "dataset": {
+                "name": "Credit Card Fraud Detection",
+                "kaggle": "mlg-ulb/creditcardfraud",
+                "openml_id": OPENML_ID,
+                "reference": "Dal Pozzolo et al. — European cardholders, PCA anonymised features",
+                "n_full": int(len(df)),
+                "n_features_full": len(feature_cols),
+                "sample_csv": "creditcard_fraud_sample.csv",
+            },
             "n_samples": int(len(df)),
-            "n_features": len(FEATURE_COLS),
-            "fraud_rate": float(df["is_fraud"].mean()),
+            "n_features": len(feature_cols),
+            "fraud_rate": float(y.mean()),
             "train_test_split": 0.75,
             "test_size": 0.25,
             "class_imbalance_handling": {
                 "logistic_regression": "class_weight='balanced'",
                 "xgboost": f"scale_pos_weight={scale_pos_weight:.2f} (n_neg/n_pos)",
             },
-            "feature_names": FEATURE_COLS,
+            "feature_names": feature_cols,
+            "live_features": live_features,
+            "live_defaults": live_defaults,
+            "live_ranges": live_ranges,
             "why_models": (
-                "Logistic Regression retained for coefficient-level explainability required in "
-                "regulated fraud decisions. XGBoost retained as the high-AUC production candidate "
-                "that captures non-linear feature interactions."
+                "On the Kaggle ULB credit-card fraud benchmark, Logistic Regression keeps "
+                "signed coefficients for governance review of PCA-space drivers. XGBoost "
+                "captures non-linear interactions and is evaluated with PR-AUC under ~0.17% fraud."
             ),
         },
         "logistic_regression": {
             **lr_metrics,
-            "coefficients": {f: float(c) for f, c in zip(FEATURE_COLS, lr.coef_[0])},
+            "coefficients": {f: float(c) for f, c in zip(feature_cols, lr.coef_[0])},
             "intercept": float(lr.intercept_[0]),
-            "scaler_mean": {f: float(m) for f, m in zip(FEATURE_COLS, scaler.mean_)},
-            "scaler_scale": {f: float(s) for f, s in zip(FEATURE_COLS, scaler.scale_)},
+            "scaler_mean": {f: float(m) for f, m in zip(feature_cols, scaler.mean_)},
+            "scaler_scale": {f: float(s) for f, s in zip(feature_cols, scaler.scale_)},
         },
         "xgboost": xgb_metrics,
         "samples": samples,
@@ -292,9 +252,11 @@ def train_and_export() -> dict:
     with open(OUTPUT_PATH, "w", encoding="utf-8") as f:
         json.dump(artifact, f, indent=2)
 
+    print(f"Fraud rate={y.mean():.4%} | n={len(df)}")
     print(f"LR  ROC-AUC={lr_metrics['roc_auc']:.4f}  PR-AUC={lr_metrics['pr_auc']:.4f}  F1={lr_metrics['f1']:.4f}")
     print(f"XGB ROC-AUC={xgb_metrics['roc_auc']:.4f}  PR-AUC={xgb_metrics['pr_auc']:.4f}  F1={xgb_metrics['f1']:.4f}")
-    print(f"Exported -> {OUTPUT_PATH}")
+    print(f"Live features: {live_features}")
+    print(f"Exported → {OUTPUT_PATH}")
     return artifact
 
 

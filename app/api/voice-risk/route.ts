@@ -27,7 +27,7 @@ If the transcript is empty, unclear, or unrelated to a payment, set score low an
 async function transcribe(audio: Blob, apiKey: string): Promise<string> {
   const form = new FormData();
   form.append("file", audio, "audio.webm");
-  form.append("model", "whisper-1");
+  form.append("model", "gpt-4o-transcribe");
 
   const res = await fetch("https://api.openai.com/v1/audio/transcriptions", {
     method: "POST",
@@ -36,8 +36,21 @@ async function transcribe(audio: Blob, apiKey: string): Promise<string> {
   });
 
   if (!res.ok) {
-    const err = await res.text();
-    throw new Error(`Whisper error: ${err}`);
+    // Fallback for accounts without gpt-4o-transcribe
+    const form2 = new FormData();
+    form2.append("file", audio, "audio.webm");
+    form2.append("model", "whisper-1");
+    const res2 = await fetch("https://api.openai.com/v1/audio/transcriptions", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${apiKey}` },
+      body: form2,
+    });
+    if (!res2.ok) {
+      const err = await res2.text();
+      throw new Error(`Transcription failed: ${err}`);
+    }
+    const data2 = await res2.json();
+    return (data2.text as string) || "";
   }
   const data = await res.json();
   return (data.text as string) || "";
@@ -51,7 +64,7 @@ async function extractSignals(transcript: string, apiKey: string) {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      model: "gpt-4o-mini",
+      model: "gpt-4o",
       temperature: 0,
       response_format: { type: "json_object" },
       messages: [
@@ -66,7 +79,7 @@ async function extractSignals(transcript: string, apiKey: string) {
 
   if (!res.ok) {
     const err = await res.text();
-    throw new Error(`GPT error: ${err}`);
+    throw new Error(`Voice model error: ${err}`);
   }
   const data = await res.json();
   const content = data.choices?.[0]?.message?.content ?? "{}";
@@ -78,10 +91,7 @@ export async function POST(req: NextRequest) {
     const apiKey = process.env.OPENAI_API_KEY;
     if (!apiKey) {
       return NextResponse.json(
-        {
-          error:
-            "OPENAI_API_KEY is not set. Add it in Vercel env vars (or .env.local) to enable Voice Payment Check.",
-        },
+        { error: "Voice model is offline. Add your API key in .env.local to try me." },
         { status: 503 }
       );
     }
