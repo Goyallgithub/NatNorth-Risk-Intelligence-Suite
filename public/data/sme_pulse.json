@@ -1,0 +1,1502 @@
+{
+  "meta": {
+    "task": "sme_pulse",
+    "n_smes": 500,
+    "n_months": 12,
+    "n_panel_rows": 6000,
+    "n_train_accounts": 375,
+    "distress_rate": 0.218,
+    "train_test_split": 0.75,
+    "test_size": 0.25,
+    "training_row": "month-12 snapshot per SME (account-level label)",
+    "feature_names": [
+      "monthly_inflow",
+      "monthly_outflow",
+      "overdraft_days_used",
+      "late_supplier_payments",
+      "inflow_volatility_3m",
+      "cash_runway_months"
+    ],
+    "class_imbalance_handling": {
+      "logistic_regression": "class_weight='balanced'",
+      "random_forest": "class_weight='balanced_subsample'"
+    },
+    "why_models": "Logistic Regression for audit-ready coefficient explanations to credit committees. Random Forest for non-linear interaction capture and stronger early-warning discrimination on deteriorating cash-flow patterns."
+  },
+  "logistic_regression": {
+    "accuracy": 0.912,
+    "precision": 0.7666666666666667,
+    "recall": 0.8518518518518519,
+    "f1": 0.8070175438596491,
+    "roc_auc": 0.9108087679516251,
+    "pr_auc": 0.8787197147127119,
+    "confusion_matrix": [
+      [
+        91,
+        7
+      ],
+      [
+        4,
+        23
+      ]
+    ],
+    "roc_curve": [
+      {
+        "x": 0.0,
+        "y": 0.0
+      },
+      {
+        "x": 0.0,
+        "y": 0.037037037037037035
+      },
+      {
+        "x": 0.0,
+        "y": 0.5185185185185185
+      },
+      {
+        "x": 0.01020408163265306,
+        "y": 0.5185185185185185
+      },
+      {
+        "x": 0.01020408163265306,
+        "y": 0.7407407407407407
+      },
+      {
+        "x": 0.030612244897959183,
+        "y": 0.7407407407407407
+      },
+      {
+        "x": 0.030612244897959183,
+        "y": 0.8518518518518519
+      },
+      {
+        "x": 0.2857142857142857,
+        "y": 0.8518518518518519
+      },
+      {
+        "x": 0.2857142857142857,
+        "y": 0.8888888888888888
+      },
+      {
+        "x": 0.29591836734693877,
+        "y": 0.8888888888888888
+      },
+      {
+        "x": 0.29591836734693877,
+        "y": 0.9259259259259259
+      },
+      {
+        "x": 0.826530612244898,
+        "y": 0.9259259259259259
+      },
+      {
+        "x": 0.826530612244898,
+        "y": 0.9629629629629629
+      },
+      {
+        "x": 0.8469387755102041,
+        "y": 0.9629629629629629
+      },
+      {
+        "x": 0.8469387755102041,
+        "y": 1.0
+      },
+      {
+        "x": 1.0,
+        "y": 1.0
+      }
+    ],
+    "pr_curve": [
+      {
+        "x": 1.0,
+        "y": 0.216
+      },
+      {
+        "x": 1.0,
+        "y": 0.21774193548387097
+      },
+      {
+        "x": 1.0,
+        "y": 0.22131147540983606
+      },
+      {
+        "x": 1.0,
+        "y": 0.2231404958677686
+      },
+      {
+        "x": 1.0,
+        "y": 0.226890756302521
+      },
+      {
+        "x": 1.0,
+        "y": 0.2288135593220339
+      },
+      {
+        "x": 1.0,
+        "y": 0.23275862068965517
+      },
+      {
+        "x": 1.0,
+        "y": 0.23684210526315788
+      },
+      {
+        "x": 1.0,
+        "y": 0.23893805309734514
+      },
+      {
+        "x": 1.0,
+        "y": 0.24324324324324326
+      },
+      {
+        "x": 1.0,
+        "y": 0.24545454545454545
+      },
+      {
+        "x": 0.9629629629629629,
+        "y": 0.24074074074074073
+      },
+      {
+        "x": 0.9629629629629629,
+        "y": 0.24299065420560748
+      },
+      {
+        "x": 0.9259259259259259,
+        "y": 0.23809523809523808
+      },
+      {
+        "x": 0.9259259259259259,
+        "y": 0.24271844660194175
+      },
+      {
+        "x": 0.9259259259259259,
+        "y": 0.24509803921568626
+      },
+      {
+        "x": 0.9259259259259259,
+        "y": 0.25
+      },
+      {
+        "x": 0.9259259259259259,
+        "y": 0.25252525252525254
+      },
+      {
+        "x": 0.9259259259259259,
+        "y": 0.25773195876288657
+      },
+      {
+        "x": 0.9259259259259259,
+        "y": 0.2631578947368421
+      },
+      {
+        "x": 0.9259259259259259,
+        "y": 0.26595744680851063
+      },
+      {
+        "x": 0.9259259259259259,
+        "y": 0.2717391304347826
+      },
+      {
+        "x": 0.9259259259259259,
+        "y": 0.27472527472527475
+      },
+      {
+        "x": 0.9259259259259259,
+        "y": 0.2808988764044944
+      },
+      {
+        "x": 0.9259259259259259,
+        "y": 0.2840909090909091
+      },
+      {
+        "x": 0.9259259259259259,
+        "y": 0.29069767441860467
+      },
+      {
+        "x": 0.9259259259259259,
+        "y": 0.2976190476190476
+      },
+      {
+        "x": 0.9259259259259259,
+        "y": 0.30120481927710846
+      },
+      {
+        "x": 0.9259259259259259,
+        "y": 0.30864197530864196
+      },
+      {
+        "x": 0.9259259259259259,
+        "y": 0.3125
+      },
+      {
+        "x": 0.9259259259259259,
+        "y": 0.32051282051282054
+      },
+      {
+        "x": 0.9259259259259259,
+        "y": 0.32894736842105265
+      },
+      {
+        "x": 0.9259259259259259,
+        "y": 0.3333333333333333
+      },
+      {
+        "x": 0.9259259259259259,
+        "y": 0.3424657534246575
+      },
+      {
+        "x": 0.9259259259259259,
+        "y": 0.3472222222222222
+      },
+      {
+        "x": 0.9259259259259259,
+        "y": 0.35714285714285715
+      },
+      {
+        "x": 0.9259259259259259,
+        "y": 0.36231884057971014
+      },
+      {
+        "x": 0.9259259259259259,
+        "y": 0.373134328358209
+      },
+      {
+        "x": 0.9259259259259259,
+        "y": 0.38461538461538464
+      },
+      {
+        "x": 0.9259259259259259,
+        "y": 0.390625
+      },
+      {
+        "x": 0.9259259259259259,
+        "y": 0.4032258064516129
+      },
+      {
+        "x": 0.9259259259259259,
+        "y": 0.4098360655737705
+      },
+      {
+        "x": 0.9259259259259259,
+        "y": 0.423728813559322
+      },
+      {
+        "x": 0.9259259259259259,
+        "y": 0.43859649122807015
+      },
+      {
+        "x": 0.9259259259259259,
+        "y": 0.44642857142857145
+      },
+      {
+        "x": 0.9259259259259259,
+        "y": 0.46296296296296297
+      },
+      {
+        "x": 0.8888888888888888,
+        "y": 0.4528301886792453
+      },
+      {
+        "x": 0.8518518518518519,
+        "y": 0.45098039215686275
+      },
+      {
+        "x": 0.8518518518518519,
+        "y": 0.46
+      },
+      {
+        "x": 0.8518518518518519,
+        "y": 0.4791666666666667
+      },
+      {
+        "x": 0.8518518518518519,
+        "y": 0.5
+      },
+      {
+        "x": 0.8518518518518519,
+        "y": 0.5111111111111111
+      },
+      {
+        "x": 0.8518518518518519,
+        "y": 0.5348837209302325
+      },
+      {
+        "x": 0.8518518518518519,
+        "y": 0.5476190476190477
+      },
+      {
+        "x": 0.8518518518518519,
+        "y": 0.575
+      },
+      {
+        "x": 0.8518518518518519,
+        "y": 0.6052631578947368
+      },
+      {
+        "x": 0.8518518518518519,
+        "y": 0.6216216216216216
+      },
+      {
+        "x": 0.8518518518518519,
+        "y": 0.6571428571428571
+      },
+      {
+        "x": 0.8518518518518519,
+        "y": 0.6764705882352942
+      },
+      {
+        "x": 0.8518518518518519,
+        "y": 0.71875
+      },
+      {
+        "x": 0.8518518518518519,
+        "y": 0.7419354838709677
+      },
+      {
+        "x": 0.8518518518518519,
+        "y": 0.7931034482758621
+      },
+      {
+        "x": 0.8518518518518519,
+        "y": 0.8518518518518519
+      },
+      {
+        "x": 0.8518518518518519,
+        "y": 0.8846153846153846
+      },
+      {
+        "x": 0.7777777777777778,
+        "y": 0.875
+      },
+      {
+        "x": 0.7407407407407407,
+        "y": 0.8695652173913043
+      },
+      {
+        "x": 0.7407407407407407,
+        "y": 0.9523809523809523
+      },
+      {
+        "x": 0.6666666666666666,
+        "y": 0.9473684210526315
+      },
+      {
+        "x": 0.6296296296296297,
+        "y": 0.9444444444444444
+      },
+      {
+        "x": 0.5555555555555556,
+        "y": 0.9375
+      },
+      {
+        "x": 0.5185185185185185,
+        "y": 0.9333333333333333
+      },
+      {
+        "x": 0.48148148148148145,
+        "y": 1.0
+      },
+      {
+        "x": 0.4444444444444444,
+        "y": 1.0
+      },
+      {
+        "x": 0.37037037037037035,
+        "y": 1.0
+      },
+      {
+        "x": 0.2962962962962963,
+        "y": 1.0
+      },
+      {
+        "x": 0.25925925925925924,
+        "y": 1.0
+      },
+      {
+        "x": 0.18518518518518517,
+        "y": 1.0
+      },
+      {
+        "x": 0.14814814814814814,
+        "y": 1.0
+      },
+      {
+        "x": 0.07407407407407407,
+        "y": 1.0
+      },
+      {
+        "x": 0.0,
+        "y": 1.0
+      }
+    ],
+    "feature_importances": [
+      {
+        "feature": "cash_runway_months",
+        "importance": -0.8138825482385125
+      },
+      {
+        "feature": "overdraft_days_used",
+        "importance": 0.7823281182090895
+      },
+      {
+        "feature": "late_supplier_payments",
+        "importance": 0.5510692787749584
+      },
+      {
+        "feature": "monthly_inflow",
+        "importance": -0.48677907535773646
+      },
+      {
+        "feature": "monthly_outflow",
+        "importance": 0.2628946200697911
+      },
+      {
+        "feature": "inflow_volatility_3m",
+        "importance": 0.12980464798080155
+      }
+    ],
+    "coefficients": {
+      "monthly_inflow": -0.48677907535773646,
+      "monthly_outflow": 0.2628946200697911,
+      "overdraft_days_used": 0.7823281182090895,
+      "late_supplier_payments": 0.5510692787749584,
+      "inflow_volatility_3m": 0.12980464798080155,
+      "cash_runway_months": -0.8138825482385125
+    },
+    "intercept": -0.626662166376959,
+    "scaler_mean": {
+      "monthly_inflow": 35778.727626666616,
+      "monthly_outflow": 30145.95946666669,
+      "overdraft_days_used": 2.1866666666666665,
+      "late_supplier_payments": 1.0293333333333334,
+      "inflow_volatility_3m": 0.12070453333333336,
+      "cash_runway_months": 7.510479999999999
+    },
+    "scaler_scale": {
+      "monthly_inflow": 15745.931269402558,
+      "monthly_outflow": 12826.770767737014,
+      "overdraft_days_used": 2.1755816591329205,
+      "late_supplier_payments": 1.3433066994878335,
+      "inflow_volatility_3m": 0.06917793178547299,
+      "cash_runway_months": 3.641164690443613
+    }
+  },
+  "random_forest": {
+    "accuracy": 0.944,
+    "precision": 0.8846153846153846,
+    "recall": 0.8518518518518519,
+    "f1": 0.8679245283018868,
+    "roc_auc": 0.8975812547241119,
+    "pr_auc": 0.8590360979274987,
+    "confusion_matrix": [
+      [
+        95,
+        3
+      ],
+      [
+        4,
+        23
+      ]
+    ],
+    "roc_curve": [
+      {
+        "x": 0.0,
+        "y": 0.0
+      },
+      {
+        "x": 0.0,
+        "y": 0.037037037037037035
+      },
+      {
+        "x": 0.0,
+        "y": 0.1111111111111111
+      },
+      {
+        "x": 0.0,
+        "y": 0.2962962962962963
+      },
+      {
+        "x": 0.01020408163265306,
+        "y": 0.2962962962962963
+      },
+      {
+        "x": 0.01020408163265306,
+        "y": 0.7407407407407407
+      },
+      {
+        "x": 0.02040816326530612,
+        "y": 0.7407407407407407
+      },
+      {
+        "x": 0.02040816326530612,
+        "y": 0.8518518518518519
+      },
+      {
+        "x": 0.2857142857142857,
+        "y": 0.8518518518518519
+      },
+      {
+        "x": 0.2857142857142857,
+        "y": 0.8888888888888888
+      },
+      {
+        "x": 0.5204081632653061,
+        "y": 0.8888888888888888
+      },
+      {
+        "x": 0.5204081632653061,
+        "y": 0.9259259259259259
+      },
+      {
+        "x": 0.7857142857142857,
+        "y": 0.9259259259259259
+      },
+      {
+        "x": 0.7857142857142857,
+        "y": 0.9629629629629629
+      },
+      {
+        "x": 0.9897959183673469,
+        "y": 0.9629629629629629
+      },
+      {
+        "x": 0.9897959183673469,
+        "y": 1.0
+      },
+      {
+        "x": 1.0,
+        "y": 1.0
+      }
+    ],
+    "pr_curve": [
+      {
+        "x": 1.0,
+        "y": 0.216
+      },
+      {
+        "x": 1.0,
+        "y": 0.21774193548387097
+      },
+      {
+        "x": 0.9629629629629629,
+        "y": 0.21311475409836064
+      },
+      {
+        "x": 0.9629629629629629,
+        "y": 0.21487603305785125
+      },
+      {
+        "x": 0.9629629629629629,
+        "y": 0.2184873949579832
+      },
+      {
+        "x": 0.9629629629629629,
+        "y": 0.22033898305084745
+      },
+      {
+        "x": 0.9629629629629629,
+        "y": 0.22413793103448276
+      },
+      {
+        "x": 0.9629629629629629,
+        "y": 0.22608695652173913
+      },
+      {
+        "x": 0.9629629629629629,
+        "y": 0.23008849557522124
+      },
+      {
+        "x": 0.9629629629629629,
+        "y": 0.23423423423423423
+      },
+      {
+        "x": 0.9629629629629629,
+        "y": 0.23636363636363636
+      },
+      {
+        "x": 0.9629629629629629,
+        "y": 0.24074074074074073
+      },
+      {
+        "x": 0.9629629629629629,
+        "y": 0.24299065420560748
+      },
+      {
+        "x": 0.9629629629629629,
+        "y": 0.24761904761904763
+      },
+      {
+        "x": 0.9629629629629629,
+        "y": 0.25
+      },
+      {
+        "x": 0.9259259259259259,
+        "y": 0.24509803921568626
+      },
+      {
+        "x": 0.9259259259259259,
+        "y": 0.25
+      },
+      {
+        "x": 0.9259259259259259,
+        "y": 0.25252525252525254
+      },
+      {
+        "x": 0.9259259259259259,
+        "y": 0.25773195876288657
+      },
+      {
+        "x": 0.9259259259259259,
+        "y": 0.2604166666666667
+      },
+      {
+        "x": 0.9259259259259259,
+        "y": 0.26595744680851063
+      },
+      {
+        "x": 0.9259259259259259,
+        "y": 0.26881720430107525
+      },
+      {
+        "x": 0.9259259259259259,
+        "y": 0.27472527472527475
+      },
+      {
+        "x": 0.9259259259259259,
+        "y": 0.2808988764044944
+      },
+      {
+        "x": 0.9259259259259259,
+        "y": 0.2840909090909091
+      },
+      {
+        "x": 0.9259259259259259,
+        "y": 0.29069767441860467
+      },
+      {
+        "x": 0.9259259259259259,
+        "y": 0.29411764705882354
+      },
+      {
+        "x": 0.9259259259259259,
+        "y": 0.30120481927710846
+      },
+      {
+        "x": 0.9259259259259259,
+        "y": 0.3048780487804878
+      },
+      {
+        "x": 0.9259259259259259,
+        "y": 0.3125
+      },
+      {
+        "x": 0.9259259259259259,
+        "y": 0.32051282051282054
+      },
+      {
+        "x": 0.9259259259259259,
+        "y": 0.3246753246753247
+      },
+      {
+        "x": 0.8888888888888888,
+        "y": 0.32
+      },
+      {
+        "x": 0.8888888888888888,
+        "y": 0.32432432432432434
+      },
+      {
+        "x": 0.8888888888888888,
+        "y": 0.3333333333333333
+      },
+      {
+        "x": 0.8888888888888888,
+        "y": 0.3380281690140845
+      },
+      {
+        "x": 0.8888888888888888,
+        "y": 0.34782608695652173
+      },
+      {
+        "x": 0.8888888888888888,
+        "y": 0.3582089552238806
+      },
+      {
+        "x": 0.8888888888888888,
+        "y": 0.36363636363636365
+      },
+      {
+        "x": 0.8888888888888888,
+        "y": 0.375
+      },
+      {
+        "x": 0.8888888888888888,
+        "y": 0.38095238095238093
+      },
+      {
+        "x": 0.8888888888888888,
+        "y": 0.39344262295081966
+      },
+      {
+        "x": 0.8888888888888888,
+        "y": 0.4
+      },
+      {
+        "x": 0.8888888888888888,
+        "y": 0.41379310344827586
+      },
+      {
+        "x": 0.8888888888888888,
+        "y": 0.42857142857142855
+      },
+      {
+        "x": 0.8888888888888888,
+        "y": 0.43636363636363634
+      },
+      {
+        "x": 0.8888888888888888,
+        "y": 0.4528301886792453
+      },
+      {
+        "x": 0.8888888888888888,
+        "y": 0.46153846153846156
+      },
+      {
+        "x": 0.8518518518518519,
+        "y": 0.46
+      },
+      {
+        "x": 0.8518518518518519,
+        "y": 0.46938775510204084
+      },
+      {
+        "x": 0.8518518518518519,
+        "y": 0.48936170212765956
+      },
+      {
+        "x": 0.8518518518518519,
+        "y": 0.5111111111111111
+      },
+      {
+        "x": 0.8518518518518519,
+        "y": 0.5227272727272727
+      },
+      {
+        "x": 0.8518518518518519,
+        "y": 0.5476190476190477
+      },
+      {
+        "x": 0.8518518518518519,
+        "y": 0.5609756097560976
+      },
+      {
+        "x": 0.8518518518518519,
+        "y": 0.5897435897435898
+      },
+      {
+        "x": 0.8518518518518519,
+        "y": 0.6052631578947368
+      },
+      {
+        "x": 0.8518518518518519,
+        "y": 0.6388888888888888
+      },
+      {
+        "x": 0.8518518518518519,
+        "y": 0.6764705882352942
+      },
+      {
+        "x": 0.8518518518518519,
+        "y": 0.696969696969697
+      },
+      {
+        "x": 0.8518518518518519,
+        "y": 0.7419354838709677
+      },
+      {
+        "x": 0.8518518518518519,
+        "y": 0.7666666666666667
+      },
+      {
+        "x": 0.8518518518518519,
+        "y": 0.8214285714285714
+      },
+      {
+        "x": 0.8518518518518519,
+        "y": 0.8518518518518519
+      },
+      {
+        "x": 0.8518518518518519,
+        "y": 0.92
+      },
+      {
+        "x": 0.7777777777777778,
+        "y": 0.9130434782608695
+      },
+      {
+        "x": 0.7407407407407407,
+        "y": 0.9090909090909091
+      },
+      {
+        "x": 0.7037037037037037,
+        "y": 0.95
+      },
+      {
+        "x": 0.6666666666666666,
+        "y": 0.9473684210526315
+      },
+      {
+        "x": 0.5925925925925926,
+        "y": 0.9411764705882353
+      },
+      {
+        "x": 0.5555555555555556,
+        "y": 0.9375
+      },
+      {
+        "x": 0.48148148148148145,
+        "y": 0.9285714285714286
+      },
+      {
+        "x": 0.4074074074074074,
+        "y": 0.9166666666666666
+      },
+      {
+        "x": 0.37037037037037035,
+        "y": 0.9090909090909091
+      },
+      {
+        "x": 0.2962962962962963,
+        "y": 0.8888888888888888
+      },
+      {
+        "x": 0.2962962962962963,
+        "y": 1.0
+      },
+      {
+        "x": 0.2222222222222222,
+        "y": 1.0
+      },
+      {
+        "x": 0.18518518518518517,
+        "y": 1.0
+      },
+      {
+        "x": 0.1111111111111111,
+        "y": 1.0
+      },
+      {
+        "x": 0.0,
+        "y": 1.0
+      }
+    ],
+    "feature_importances": [
+      {
+        "feature": "cash_runway_months",
+        "importance": 0.3725892451607011
+      },
+      {
+        "feature": "inflow_volatility_3m",
+        "importance": 0.16124593174182036
+      },
+      {
+        "feature": "overdraft_days_used",
+        "importance": 0.15424972924726657
+      },
+      {
+        "feature": "monthly_inflow",
+        "importance": 0.1259237199245091
+      },
+      {
+        "feature": "late_supplier_payments",
+        "importance": 0.1070319248156635
+      },
+      {
+        "feature": "monthly_outflow",
+        "importance": 0.07895944911003949
+      }
+    ]
+  },
+  "trajectories": [
+    {
+      "sme_id": "SME-350",
+      "true_distressed": 1,
+      "high_risk_threshold": 60,
+      "crossed_high_risk_month": 1,
+      "months": [
+        {
+          "month": 1,
+          "distress_score_lr": 70.53,
+          "distress_score_rf": 32.88,
+          "monthly_inflow": 16712.33,
+          "monthly_outflow": 13760.9,
+          "cash_runway_months": 5.63,
+          "overdraft_days_used": 2
+        },
+        {
+          "month": 2,
+          "distress_score_lr": 51.7,
+          "distress_score_rf": 28.41,
+          "monthly_inflow": 14035.4,
+          "monthly_outflow": 12721.08,
+          "cash_runway_months": 4.95,
+          "overdraft_days_used": 3
+        },
+        {
+          "month": 3,
+          "distress_score_lr": 44.54,
+          "distress_score_rf": 17.99,
+          "monthly_inflow": 15926.01,
+          "monthly_outflow": 18114.46,
+          "cash_runway_months": 4.96,
+          "overdraft_days_used": 1
+        },
+        {
+          "month": 4,
+          "distress_score_lr": 87.28,
+          "distress_score_rf": 32.97,
+          "monthly_inflow": 15249.07,
+          "monthly_outflow": 13856.29,
+          "cash_runway_months": 5.0,
+          "overdraft_days_used": 5
+        },
+        {
+          "month": 5,
+          "distress_score_lr": 59.34,
+          "distress_score_rf": 23.82,
+          "monthly_inflow": 17309.58,
+          "monthly_outflow": 14150.03,
+          "cash_runway_months": 4.79,
+          "overdraft_days_used": 3
+        },
+        {
+          "month": 6,
+          "distress_score_lr": 50.73,
+          "distress_score_rf": 22.42,
+          "monthly_inflow": 16153.67,
+          "monthly_outflow": 17514.77,
+          "cash_runway_months": 5.2,
+          "overdraft_days_used": 2
+        },
+        {
+          "month": 7,
+          "distress_score_lr": 62.86,
+          "distress_score_rf": 40.79,
+          "monthly_inflow": 15770.1,
+          "monthly_outflow": 15921.26,
+          "cash_runway_months": 4.31,
+          "overdraft_days_used": 4
+        },
+        {
+          "month": 8,
+          "distress_score_lr": 57.21,
+          "distress_score_rf": 25.99,
+          "monthly_inflow": 16517.84,
+          "monthly_outflow": 17839.16,
+          "cash_runway_months": 5.59,
+          "overdraft_days_used": 3
+        },
+        {
+          "month": 9,
+          "distress_score_lr": 82.76,
+          "distress_score_rf": 44.99,
+          "monthly_inflow": 12087.8,
+          "monthly_outflow": 12197.89,
+          "cash_runway_months": 4.74,
+          "overdraft_days_used": 3
+        },
+        {
+          "month": 10,
+          "distress_score_lr": 95.9,
+          "distress_score_rf": 81.09,
+          "monthly_inflow": 15028.48,
+          "monthly_outflow": 17190.68,
+          "cash_runway_months": 4.29,
+          "overdraft_days_used": 8
+        },
+        {
+          "month": 11,
+          "distress_score_lr": 98.56,
+          "distress_score_rf": 84.04,
+          "monthly_inflow": 12819.36,
+          "monthly_outflow": 15731.2,
+          "cash_runway_months": 4.17,
+          "overdraft_days_used": 4
+        },
+        {
+          "month": 12,
+          "distress_score_lr": 94.52,
+          "distress_score_rf": 96.56,
+          "monthly_inflow": 13706.94,
+          "monthly_outflow": 13401.15,
+          "cash_runway_months": 3.49,
+          "overdraft_days_used": 6
+        }
+      ]
+    },
+    {
+      "sme_id": "SME-062",
+      "true_distressed": 1,
+      "high_risk_threshold": 60,
+      "crossed_high_risk_month": 1,
+      "months": [
+        {
+          "month": 1,
+          "distress_score_lr": 80.34,
+          "distress_score_rf": 81.75,
+          "monthly_inflow": 10552.68,
+          "monthly_outflow": 11060.9,
+          "cash_runway_months": 2.04,
+          "overdraft_days_used": 2
+        },
+        {
+          "month": 2,
+          "distress_score_lr": 61.28,
+          "distress_score_rf": 46.71,
+          "monthly_inflow": 12427.65,
+          "monthly_outflow": 13245.94,
+          "cash_runway_months": 3.65,
+          "overdraft_days_used": 2
+        },
+        {
+          "month": 3,
+          "distress_score_lr": 58.78,
+          "distress_score_rf": 59.04,
+          "monthly_inflow": 10568.58,
+          "monthly_outflow": 11598.65,
+          "cash_runway_months": 2.59,
+          "overdraft_days_used": 1
+        },
+        {
+          "month": 4,
+          "distress_score_lr": 49.97,
+          "distress_score_rf": 72.87,
+          "monthly_inflow": 9185.27,
+          "monthly_outflow": 9234.98,
+          "cash_runway_months": 2.7,
+          "overdraft_days_used": 1
+        },
+        {
+          "month": 5,
+          "distress_score_lr": 68.95,
+          "distress_score_rf": 68.41,
+          "monthly_inflow": 10970.94,
+          "monthly_outflow": 8755.2,
+          "cash_runway_months": 1.64,
+          "overdraft_days_used": 3
+        },
+        {
+          "month": 6,
+          "distress_score_lr": 51.77,
+          "distress_score_rf": 48.4,
+          "monthly_inflow": 11310.68,
+          "monthly_outflow": 12512.87,
+          "cash_runway_months": 3.7,
+          "overdraft_days_used": 2
+        },
+        {
+          "month": 7,
+          "distress_score_lr": 92.63,
+          "distress_score_rf": 94.75,
+          "monthly_inflow": 7985.14,
+          "monthly_outflow": 8952.42,
+          "cash_runway_months": 1.77,
+          "overdraft_days_used": 6
+        },
+        {
+          "month": 8,
+          "distress_score_lr": 97.98,
+          "distress_score_rf": 99.82,
+          "monthly_inflow": 10562.0,
+          "monthly_outflow": 11732.9,
+          "cash_runway_months": 2.61,
+          "overdraft_days_used": 8
+        },
+        {
+          "month": 9,
+          "distress_score_lr": 91.14,
+          "distress_score_rf": 99.68,
+          "monthly_inflow": 10455.31,
+          "monthly_outflow": 8982.88,
+          "cash_runway_months": 2.86,
+          "overdraft_days_used": 4
+        },
+        {
+          "month": 10,
+          "distress_score_lr": 93.01,
+          "distress_score_rf": 99.24,
+          "monthly_inflow": 8821.61,
+          "monthly_outflow": 8591.31,
+          "cash_runway_months": 1.58,
+          "overdraft_days_used": 5
+        },
+        {
+          "month": 11,
+          "distress_score_lr": 86.09,
+          "distress_score_rf": 92.76,
+          "monthly_inflow": 8343.08,
+          "monthly_outflow": 10582.67,
+          "cash_runway_months": 2.27,
+          "overdraft_days_used": 4
+        },
+        {
+          "month": 12,
+          "distress_score_lr": 91.39,
+          "distress_score_rf": 89.79,
+          "monthly_inflow": 9201.71,
+          "monthly_outflow": 11470.61,
+          "cash_runway_months": 0.73,
+          "overdraft_days_used": 5
+        }
+      ]
+    },
+    {
+      "sme_id": "SME-402",
+      "true_distressed": 1,
+      "high_risk_threshold": 60,
+      "crossed_high_risk_month": 1,
+      "months": [
+        {
+          "month": 1,
+          "distress_score_lr": 67.48,
+          "distress_score_rf": 60.18,
+          "monthly_inflow": 20541.8,
+          "monthly_outflow": 17883.28,
+          "cash_runway_months": 3.15,
+          "overdraft_days_used": 1
+        },
+        {
+          "month": 2,
+          "distress_score_lr": 87.24,
+          "distress_score_rf": 65.74,
+          "monthly_inflow": 19572.63,
+          "monthly_outflow": 20509.84,
+          "cash_runway_months": 2.96,
+          "overdraft_days_used": 5
+        },
+        {
+          "month": 3,
+          "distress_score_lr": 87.32,
+          "distress_score_rf": 42.6,
+          "monthly_inflow": 20112.29,
+          "monthly_outflow": 20105.42,
+          "cash_runway_months": 4.39,
+          "overdraft_days_used": 6
+        },
+        {
+          "month": 4,
+          "distress_score_lr": 35.19,
+          "distress_score_rf": 20.0,
+          "monthly_inflow": 22155.38,
+          "monthly_outflow": 19976.78,
+          "cash_runway_months": 4.26,
+          "overdraft_days_used": 0
+        },
+        {
+          "month": 5,
+          "distress_score_lr": 80.7,
+          "distress_score_rf": 59.86,
+          "monthly_inflow": 20857.82,
+          "monthly_outflow": 20147.2,
+          "cash_runway_months": 3.25,
+          "overdraft_days_used": 5
+        },
+        {
+          "month": 6,
+          "distress_score_lr": 33.54,
+          "distress_score_rf": 26.48,
+          "monthly_inflow": 20305.83,
+          "monthly_outflow": 16596.98,
+          "cash_runway_months": 4.16,
+          "overdraft_days_used": 1
+        },
+        {
+          "month": 7,
+          "distress_score_lr": 64.31,
+          "distress_score_rf": 63.86,
+          "monthly_inflow": 24257.36,
+          "monthly_outflow": 27378.13,
+          "cash_runway_months": 2.68,
+          "overdraft_days_used": 3
+        },
+        {
+          "month": 8,
+          "distress_score_lr": 91.39,
+          "distress_score_rf": 75.75,
+          "monthly_inflow": 22074.35,
+          "monthly_outflow": 27317.29,
+          "cash_runway_months": 2.22,
+          "overdraft_days_used": 4
+        },
+        {
+          "month": 9,
+          "distress_score_lr": 92.33,
+          "distress_score_rf": 77.57,
+          "monthly_inflow": 21505.16,
+          "monthly_outflow": 18027.01,
+          "cash_runway_months": 2.76,
+          "overdraft_days_used": 4
+        },
+        {
+          "month": 10,
+          "distress_score_lr": 88.3,
+          "distress_score_rf": 76.61,
+          "monthly_inflow": 19324.28,
+          "monthly_outflow": 21055.71,
+          "cash_runway_months": 3.93,
+          "overdraft_days_used": 4
+        },
+        {
+          "month": 11,
+          "distress_score_lr": 94.5,
+          "distress_score_rf": 84.97,
+          "monthly_inflow": 19084.38,
+          "monthly_outflow": 17324.13,
+          "cash_runway_months": 3.45,
+          "overdraft_days_used": 4
+        },
+        {
+          "month": 12,
+          "distress_score_lr": 92.66,
+          "distress_score_rf": 98.5,
+          "monthly_inflow": 16940.67,
+          "monthly_outflow": 21630.47,
+          "cash_runway_months": 2.05,
+          "overdraft_days_used": 4
+        }
+      ]
+    },
+    {
+      "sme_id": "SME-421",
+      "true_distressed": 0,
+      "high_risk_threshold": 60,
+      "crossed_high_risk_month": null,
+      "months": [
+        {
+          "month": 1,
+          "distress_score_lr": 42.84,
+          "distress_score_rf": 6.69,
+          "monthly_inflow": 26995.74,
+          "monthly_outflow": 17234.37,
+          "cash_runway_months": 7.0,
+          "overdraft_days_used": 3
+        },
+        {
+          "month": 2,
+          "distress_score_lr": 28.72,
+          "distress_score_rf": 19.23,
+          "monthly_inflow": 29516.34,
+          "monthly_outflow": 22405.24,
+          "cash_runway_months": 7.71,
+          "overdraft_days_used": 3
+        },
+        {
+          "month": 3,
+          "distress_score_lr": 22.62,
+          "distress_score_rf": 6.96,
+          "monthly_inflow": 34566.04,
+          "monthly_outflow": 31486.62,
+          "cash_runway_months": 6.56,
+          "overdraft_days_used": 1
+        },
+        {
+          "month": 4,
+          "distress_score_lr": 23.48,
+          "distress_score_rf": 10.72,
+          "monthly_inflow": 35461.64,
+          "monthly_outflow": 27804.21,
+          "cash_runway_months": 7.28,
+          "overdraft_days_used": 2
+        },
+        {
+          "month": 5,
+          "distress_score_lr": 38.39,
+          "distress_score_rf": 4.55,
+          "monthly_inflow": 26865.86,
+          "monthly_outflow": 23121.31,
+          "cash_runway_months": 6.82,
+          "overdraft_days_used": 3
+        },
+        {
+          "month": 6,
+          "distress_score_lr": 38.21,
+          "distress_score_rf": 7.38,
+          "monthly_inflow": 25198.75,
+          "monthly_outflow": 23738.19,
+          "cash_runway_months": 7.66,
+          "overdraft_days_used": 2
+        },
+        {
+          "month": 7,
+          "distress_score_lr": 36.58,
+          "distress_score_rf": 9.53,
+          "monthly_inflow": 27652.16,
+          "monthly_outflow": 25075.26,
+          "cash_runway_months": 7.01,
+          "overdraft_days_used": 1
+        },
+        {
+          "month": 8,
+          "distress_score_lr": 21.08,
+          "distress_score_rf": 7.02,
+          "monthly_inflow": 37196.85,
+          "monthly_outflow": 24581.91,
+          "cash_runway_months": 8.15,
+          "overdraft_days_used": 2
+        },
+        {
+          "month": 9,
+          "distress_score_lr": 46.8,
+          "distress_score_rf": 8.19,
+          "monthly_inflow": 28655.48,
+          "monthly_outflow": 23226.41,
+          "cash_runway_months": 6.8,
+          "overdraft_days_used": 4
+        },
+        {
+          "month": 10,
+          "distress_score_lr": 24.05,
+          "distress_score_rf": 2.38,
+          "monthly_inflow": 38745.52,
+          "monthly_outflow": 31915.93,
+          "cash_runway_months": 7.47,
+          "overdraft_days_used": 2
+        },
+        {
+          "month": 11,
+          "distress_score_lr": 13.84,
+          "distress_score_rf": 6.89,
+          "monthly_inflow": 32285.19,
+          "monthly_outflow": 23863.09,
+          "cash_runway_months": 7.43,
+          "overdraft_days_used": 0
+        },
+        {
+          "month": 12,
+          "distress_score_lr": 27.72,
+          "distress_score_rf": 6.79,
+          "monthly_inflow": 22669.29,
+          "monthly_outflow": 17468.46,
+          "cash_runway_months": 6.61,
+          "overdraft_days_used": 1
+        }
+      ]
+    },
+    {
+      "sme_id": "SME-038",
+      "true_distressed": 0,
+      "high_risk_threshold": 60,
+      "crossed_high_risk_month": null,
+      "months": [
+        {
+          "month": 1,
+          "distress_score_lr": 20.91,
+          "distress_score_rf": 2.75,
+          "monthly_inflow": 41712.41,
+          "monthly_outflow": 32784.77,
+          "cash_runway_months": 6.12,
+          "overdraft_days_used": 0
+        },
+        {
+          "month": 2,
+          "distress_score_lr": 15.49,
+          "distress_score_rf": 11.77,
+          "monthly_inflow": 42031.93,
+          "monthly_outflow": 32265.56,
+          "cash_runway_months": 5.24,
+          "overdraft_days_used": 0
+        },
+        {
+          "month": 3,
+          "distress_score_lr": 17.18,
+          "distress_score_rf": 4.68,
+          "monthly_inflow": 39782.42,
+          "monthly_outflow": 28175.84,
+          "cash_runway_months": 6.4,
+          "overdraft_days_used": 1
+        },
+        {
+          "month": 4,
+          "distress_score_lr": 15.7,
+          "distress_score_rf": 3.5,
+          "monthly_inflow": 43012.54,
+          "monthly_outflow": 27568.91,
+          "cash_runway_months": 6.45,
+          "overdraft_days_used": 1
+        },
+        {
+          "month": 5,
+          "distress_score_lr": 52.54,
+          "distress_score_rf": 7.07,
+          "monthly_inflow": 36086.42,
+          "monthly_outflow": 29446.79,
+          "cash_runway_months": 5.44,
+          "overdraft_days_used": 1
+        },
+        {
+          "month": 6,
+          "distress_score_lr": 39.12,
+          "distress_score_rf": 7.89,
+          "monthly_inflow": 42179.53,
+          "monthly_outflow": 46722.27,
+          "cash_runway_months": 6.82,
+          "overdraft_days_used": 1
+        },
+        {
+          "month": 7,
+          "distress_score_lr": 37.77,
+          "distress_score_rf": 12.18,
+          "monthly_inflow": 35570.69,
+          "monthly_outflow": 26435.8,
+          "cash_runway_months": 5.7,
+          "overdraft_days_used": 3
+        },
+        {
+          "month": 8,
+          "distress_score_lr": 16.07,
+          "distress_score_rf": 21.11,
+          "monthly_inflow": 35613.37,
+          "monthly_outflow": 30646.3,
+          "cash_runway_months": 6.44,
+          "overdraft_days_used": 0
+        },
+        {
+          "month": 9,
+          "distress_score_lr": 28.0,
+          "distress_score_rf": 7.41,
+          "monthly_inflow": 38947.02,
+          "monthly_outflow": 30444.93,
+          "cash_runway_months": 5.68,
+          "overdraft_days_used": 2
+        },
+        {
+          "month": 10,
+          "distress_score_lr": 15.98,
+          "distress_score_rf": 24.09,
+          "monthly_inflow": 35219.23,
+          "monthly_outflow": 31218.08,
+          "cash_runway_months": 6.27,
+          "overdraft_days_used": 0
+        },
+        {
+          "month": 11,
+          "distress_score_lr": 34.88,
+          "distress_score_rf": 7.34,
+          "monthly_inflow": 39987.07,
+          "monthly_outflow": 35136.25,
+          "cash_runway_months": 6.46,
+          "overdraft_days_used": 2
+        },
+        {
+          "month": 12,
+          "distress_score_lr": 38.4,
+          "distress_score_rf": 5.4,
+          "monthly_inflow": 41329.65,
+          "monthly_outflow": 34409.36,
+          "cash_runway_months": 5.87,
+          "overdraft_days_used": 1
+        }
+      ]
+    }
+  ],
+  "high_risk_threshold": 60
+}

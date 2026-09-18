@@ -1,0 +1,2678 @@
+{
+  "meta": {
+    "task": "categorizer",
+    "n_samples": 4000,
+    "n_categories": 10,
+    "categories": [
+      "Groceries",
+      "Transport",
+      "Dining",
+      "Utilities",
+      "Entertainment",
+      "Shopping",
+      "Rent/Mortgage",
+      "Salary/Income",
+      "Transfers",
+      "Subscriptions"
+    ],
+    "train_test_split": 0.75,
+    "test_size": 0.25,
+    "vectorizer": "TfidfVectorizer(word, ngram 1-2, max_features=4000)",
+    "why_models": "TF-IDF + Logistic Regression gives interpretable n-gram coefficients for category decisions. Random Forest improves robustness on noisy overlapping merchant strings where linear separators struggle."
+  },
+  "logistic_regression": {
+    "model": "TF-IDF + Logistic Regression",
+    "accuracy": 0.987,
+    "macro_f1": 0.9870849264966376,
+    "weighted_f1": 0.9870036132914104,
+    "per_category": [
+      {
+        "category": "Groceries",
+        "precision": 0.9928571428571429,
+        "recall": 0.9928571428571429,
+        "f1": 0.9928571428571429,
+        "support": 140
+      },
+      {
+        "category": "Transport",
+        "precision": 1.0,
+        "recall": 0.9805825242718447,
+        "f1": 0.9901960784313726,
+        "support": 103
+      },
+      {
+        "category": "Dining",
+        "precision": 0.9900990099009901,
+        "recall": 0.9900990099009901,
+        "f1": 0.9900990099009901,
+        "support": 101
+      },
+      {
+        "category": "Utilities",
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "support": 83
+      },
+      {
+        "category": "Entertainment",
+        "precision": 1.0,
+        "recall": 0.9466666666666667,
+        "f1": 0.9726027397260274,
+        "support": 75
+      },
+      {
+        "category": "Shopping",
+        "precision": 0.9736842105263158,
+        "recall": 0.9932885906040269,
+        "f1": 0.9833887043189369,
+        "support": 149
+      },
+      {
+        "category": "Rent/Mortgage",
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "support": 71
+      },
+      {
+        "category": "Salary/Income",
+        "precision": 1.0,
+        "recall": 0.96875,
+        "f1": 0.9841269841269841,
+        "support": 64
+      },
+      {
+        "category": "Transfers",
+        "precision": 0.9823008849557522,
+        "recall": 1.0,
+        "f1": 0.9910714285714286,
+        "support": 111
+      },
+      {
+        "category": "Subscriptions",
+        "precision": 0.9528301886792453,
+        "recall": 0.9805825242718447,
+        "f1": 0.9665071770334929,
+        "support": 103
+      }
+    ],
+    "confusion_matrix": [
+      [
+        139,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      [
+        0,
+        101,
+        1,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        1,
+        0,
+        100,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        83,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        71,
+        1,
+        0,
+        0,
+        0,
+        3
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        148,
+        0,
+        0,
+        0,
+        1
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        71,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        62,
+        2,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        111,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        2,
+        0,
+        0,
+        0,
+        101
+      ]
+    ],
+    "confusion_matrix_labels": [
+      "Groceries",
+      "Transport",
+      "Dining",
+      "Utilities",
+      "Entertainment",
+      "Shopping",
+      "Rent/Mortgage",
+      "Salary/Income",
+      "Transfers",
+      "Subscriptions"
+    ]
+  },
+  "random_forest": {
+    "model": "TF-IDF + Random Forest",
+    "accuracy": 0.931,
+    "macro_f1": 0.9393456066599646,
+    "weighted_f1": 0.9363721663166384,
+    "per_category": [
+      {
+        "category": "Groceries",
+        "precision": 0.9925373134328358,
+        "recall": 0.95,
+        "f1": 0.9708029197080292,
+        "support": 140
+      },
+      {
+        "category": "Transport",
+        "precision": 1.0,
+        "recall": 0.8058252427184466,
+        "f1": 0.8924731182795699,
+        "support": 103
+      },
+      {
+        "category": "Dining",
+        "precision": 0.9888888888888889,
+        "recall": 0.8811881188118812,
+        "f1": 0.9319371727748691,
+        "support": 101
+      },
+      {
+        "category": "Utilities",
+        "precision": 1.0,
+        "recall": 0.9759036144578314,
+        "f1": 0.9878048780487805,
+        "support": 83
+      },
+      {
+        "category": "Entertainment",
+        "precision": 1.0,
+        "recall": 0.9466666666666667,
+        "f1": 0.9726027397260274,
+        "support": 75
+      },
+      {
+        "category": "Shopping",
+        "precision": 0.9924812030075187,
+        "recall": 0.8859060402684564,
+        "f1": 0.9361702127659575,
+        "support": 149
+      },
+      {
+        "category": "Rent/Mortgage",
+        "precision": 1.0,
+        "recall": 0.9295774647887324,
+        "f1": 0.9635036496350365,
+        "support": 71
+      },
+      {
+        "category": "Salary/Income",
+        "precision": 1.0,
+        "recall": 0.96875,
+        "f1": 0.9841269841269841,
+        "support": 64
+      },
+      {
+        "category": "Transfers",
+        "precision": 0.9823008849557522,
+        "recall": 1.0,
+        "f1": 0.9910714285714286,
+        "support": 111
+      },
+      {
+        "category": "Subscriptions",
+        "precision": 0.6167664670658682,
+        "recall": 1.0,
+        "f1": 0.762962962962963,
+        "support": 103
+      }
+    ],
+    "confusion_matrix": [
+      [
+        133,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        7
+      ],
+      [
+        0,
+        83,
+        1,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        18
+      ],
+      [
+        0,
+        0,
+        89,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        12
+      ],
+      [
+        0,
+        0,
+        0,
+        81,
+        0,
+        0,
+        0,
+        0,
+        0,
+        2
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        71,
+        0,
+        0,
+        0,
+        0,
+        4
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        132,
+        0,
+        0,
+        0,
+        17
+      ],
+      [
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        66,
+        0,
+        0,
+        4
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        62,
+        2,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        111,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        103
+      ]
+    ],
+    "confusion_matrix_labels": [
+      "Groceries",
+      "Transport",
+      "Dining",
+      "Utilities",
+      "Entertainment",
+      "Shopping",
+      "Rent/Mortgage",
+      "Salary/Income",
+      "Transfers",
+      "Subscriptions"
+    ]
+  },
+  "keyword_rules": {
+    "Groceries": [
+      "tesco",
+      "sainsbury",
+      "asda",
+      "waitrose",
+      "lidl",
+      "aldi",
+      "co-op",
+      "morrison",
+      "ocado",
+      "marks"
+    ],
+    "Transport": [
+      "uber *trip",
+      "tfl",
+      "trainline",
+      "shell",
+      "petrol",
+      "fuel",
+      "bolt",
+      "parking",
+      "dvla",
+      "bus",
+      "national express"
+    ],
+    "Dining": [
+      "pret",
+      "costa",
+      "mcdonald",
+      "nando",
+      "deliveroo",
+      "just eat",
+      "starbucks",
+      "greggs",
+      "wagamama",
+      "uber *eats",
+      "domino"
+    ],
+    "Utilities": [
+      "british gas",
+      "octopus",
+      "thames water",
+      "vodafone",
+      "virgin media",
+      "scottish power",
+      "edf",
+      "council tax",
+      "ee limited",
+      "bt group"
+    ],
+    "Entertainment": [
+      "cineworld",
+      "odeon",
+      "steam",
+      "playstation",
+      "ticketmaster",
+      "eventbrite",
+      "pure gym",
+      "the gym"
+    ],
+    "Shopping": [
+      "amazon.co.uk",
+      "amzn",
+      "argos",
+      "john lewis",
+      "ikea",
+      "primark",
+      "zara",
+      "next retail",
+      "ebay",
+      "currys"
+    ],
+    "Rent/Mortgage": [
+      "mortgage",
+      "landlord",
+      "rent",
+      "property mgmt",
+      "homelet"
+    ],
+    "Salary/Income": [
+      "salary",
+      "payroll",
+      "hmrc",
+      "pension",
+      "universal credit",
+      "employer bacs"
+    ],
+    "Transfers": [
+      "fp to",
+      "transfer to",
+      "faster payment",
+      "standing order",
+      "bank transfer",
+      "p2p",
+      "revolut transfer"
+    ],
+    "Subscriptions": [
+      "netflix",
+      "spotify",
+      "disney",
+      "amazon prime",
+      "icloud",
+      "xbox",
+      "adobe",
+      "github",
+      "dropbox",
+      "guardian digital",
+      "nytimes"
+    ]
+  },
+  "vocabulary_weights": [
+    {
+      "token": "rent",
+      "mean_abs_coef": 1.3069927735460891,
+      "class_coefficients": {
+        "Dining": -0.7734804508891554,
+        "Entertainment": -0.6125508914892507,
+        "Groceries": -0.8834575810704448,
+        "Rent/Mortgage": 6.534963867730444,
+        "Salary/Income": -0.5822024144460518,
+        "Shopping": -0.6868292292231724,
+        "Subscriptions": -0.7274159488614296,
+        "Transfers": -0.9273028039512888,
+        "Transport": -0.6793216665218716,
+        "Utilities": -0.662402881277781
+      }
+    },
+    {
+      "token": "ltd",
+      "mean_abs_coef": 1.158668398506685,
+      "class_coefficients": {
+        "Dining": -1.6180059780642957,
+        "Entertainment": -1.2196042302720513,
+        "Groceries": -0.018244823522352297,
+        "Rent/Mortgage": -0.4470363013986433,
+        "Salary/Income": 0.8303955323554403,
+        "Shopping": 2.282257100282701,
+        "Subscriptions": -1.3759136832584382,
+        "Transfers": -1.1145369760176438,
+        "Transport": 0.5447111523999892,
+        "Utilities": 2.1359782074952953
+      }
+    },
+    {
+      "token": "primark",
+      "mean_abs_coef": 1.0769202356913374,
+      "class_coefficients": {
+        "Dining": -0.9290809810985227,
+        "Entertainment": -0.5622819557697112,
+        "Groceries": -0.9038593727748511,
+        "Rent/Mortgage": -0.39182569489878505,
+        "Salary/Income": -0.36424296890660607,
+        "Shopping": 5.384601178456687,
+        "Subscriptions": -0.6003378910919306,
+        "Transfers": -0.4077734581680057,
+        "Transport": -0.6884570266316681,
+        "Utilities": -0.5367418291166081
+      }
+    },
+    {
+      "token": "com",
+      "mean_abs_coef": 1.063409853428888,
+      "class_coefficients": {
+        "Dining": -0.7059417886431049,
+        "Entertainment": 1.8364726411376346,
+        "Groceries": -1.16087482011898,
+        "Rent/Mortgage": -0.7977988182524337,
+        "Salary/Income": -0.7729940476474083,
+        "Shopping": 1.8367478462010889,
+        "Subscriptions": 0.7097393199137209,
+        "Transfers": -0.8589102950333584,
+        "Transport": 0.934089459891999,
+        "Utilities": -1.0205294974491526
+      }
+    },
+    {
+      "token": "cineworld",
+      "mean_abs_coef": 1.0541772635802231,
+      "class_coefficients": {
+        "Dining": -0.8512402489941299,
+        "Entertainment": 5.270886317901116,
+        "Groceries": -0.8745067258789925,
+        "Rent/Mortgage": -0.3786475490162945,
+        "Salary/Income": -0.3507096270324174,
+        "Shopping": -0.6385205214011321,
+        "Subscriptions": -0.5869840949504678,
+        "Transfers": -0.4000331063650564,
+        "Transport": -0.6679176163393179,
+        "Utilities": -0.5223268279233062
+      }
+    },
+    {
+      "token": "waitrose",
+      "mean_abs_coef": 1.0494580509299578,
+      "class_coefficients": {
+        "Dining": -0.9508314079981038,
+        "Entertainment": -0.5827338430868136,
+        "Groceries": 5.2472902546497915,
+        "Rent/Mortgage": -0.4011748842905816,
+        "Salary/Income": -0.37095342523835795,
+        "Shopping": -0.6700517845142123,
+        "Subscriptions": -0.6029877696127969,
+        "Transfers": -0.42186763715583453,
+        "Transport": -0.7046136767360105,
+        "Utilities": -0.5420758260170766
+      }
+    },
+    {
+      "token": "payment",
+      "mean_abs_coef": 1.043238862331238,
+      "class_coefficients": {
+        "Dining": -0.7810860417892486,
+        "Entertainment": -0.6547244816655937,
+        "Groceries": -0.8117650258880731,
+        "Rent/Mortgage": 1.4818125295282638,
+        "Salary/Income": 2.0634276921846113,
+        "Shopping": -0.7160956155112331,
+        "Subscriptions": -0.7982834747207019,
+        "Transfers": 1.6709540899433177,
+        "Transport": -0.7038083369351169,
+        "Utilities": -0.7504313351462208
+      }
+    },
+    {
+      "token": "morrisons",
+      "mean_abs_coef": 0.9967809420382547,
+      "class_coefficients": {
+        "Dining": -0.8851248830696056,
+        "Entertainment": -0.5546391624747651,
+        "Groceries": 4.983904710191275,
+        "Rent/Mortgage": -0.3849246473131999,
+        "Salary/Income": -0.356978561198751,
+        "Shopping": -0.6351133026882717,
+        "Subscriptions": -0.5888866058891,
+        "Transfers": -0.4063999241081721,
+        "Transport": -0.6423872491196461,
+        "Utilities": -0.5294503743297598
+      }
+    },
+    {
+      "token": "tax",
+      "mean_abs_coef": 0.9290684147573666,
+      "class_coefficients": {
+        "Dining": -0.8193738889640714,
+        "Entertainment": -0.6210504760394193,
+        "Groceries": -0.8359277830672213,
+        "Rent/Mortgage": -0.4771752747310344,
+        "Salary/Income": 1.5510749829798613,
+        "Shopping": -0.665022700128112,
+        "Subscriptions": -0.716379679848891,
+        "Transfers": -0.5104122710080844,
+        "Transport": 1.2417371784206592,
+        "Utilities": 1.8525299123863126
+      }
+    },
+    {
+      "token": "ebay",
+      "mean_abs_coef": 0.9222594574117997,
+      "class_coefficients": {
+        "Dining": -0.5928577353762907,
+        "Entertainment": -0.5012834492111674,
+        "Groceries": -0.622230753291846,
+        "Rent/Mortgage": -0.39806368813884296,
+        "Salary/Income": -0.38303293949485495,
+        "Shopping": 4.611297287058996,
+        "Subscriptions": -0.6277302366068952,
+        "Transfers": -0.43066949727489756,
+        "Transport": -0.5268106166829176,
+        "Utilities": -0.5286183709812877
+      }
+    },
+    {
+      "token": "amazon",
+      "mean_abs_coef": 0.9161274339767645,
+      "class_coefficients": {
+        "Dining": -0.9800569060960489,
+        "Entertainment": -0.5931972408175511,
+        "Groceries": -0.7174650979849514,
+        "Rent/Mortgage": -0.40266846949068774,
+        "Salary/Income": -0.38963629490924423,
+        "Shopping": 2.1195556653274408,
+        "Subscriptions": 2.4610815045563803,
+        "Transfers": -0.43384931516264924,
+        "Transport": -0.5374528512998371,
+        "Utilities": -0.5263109941228533
+      }
+    },
+    {
+      "token": "transfer",
+      "mean_abs_coef": 0.9142358491179076,
+      "class_coefficients": {
+        "Dining": -0.5726966587305781,
+        "Entertainment": -0.4889118073512062,
+        "Groceries": -0.5886036898322866,
+        "Rent/Mortgage": -0.41913694350088876,
+        "Salary/Income": -0.38227602945897754,
+        "Shopping": -0.49639938343313156,
+        "Subscriptions": -0.598037370959039,
+        "Transfers": 4.571179245589536,
+        "Transport": -0.5072218390450836,
+        "Utilities": -0.5178955232783478
+      }
+    },
+    {
+      "token": "to",
+      "mean_abs_coef": 0.9142213000819881,
+      "class_coefficients": {
+        "Dining": -0.5550584567393552,
+        "Entertainment": -0.4727951324469306,
+        "Groceries": -0.6814352558367675,
+        "Rent/Mortgage": -0.44601469331701254,
+        "Salary/Income": -0.3641069517649589,
+        "Shopping": -0.4781779468776577,
+        "Subscriptions": -0.5808039521572264,
+        "Transfers": 4.571106500409942,
+        "Transport": -0.49153762253033556,
+        "Utilities": -0.5011764887396946
+      }
+    },
+    {
+      "token": "starbucks",
+      "mean_abs_coef": 0.9034517383958491,
+      "class_coefficients": {
+        "Dining": 4.517258691979245,
+        "Entertainment": -0.5052315643218083,
+        "Groceries": -0.8109017103730288,
+        "Rent/Mortgage": -0.34250088316803,
+        "Salary/Income": -0.312510268021103,
+        "Shopping": -0.5877099349821063,
+        "Subscriptions": -0.5181585678540048,
+        "Transfers": -0.3556899345775422,
+        "Transport": -0.6150209837309804,
+        "Utilities": -0.4695348449506416
+      }
+    },
+    {
+      "token": "uk",
+      "mean_abs_coef": 0.8924276955029411,
+      "class_coefficients": {
+        "Dining": 0.5559620911036379,
+        "Entertainment": 1.0540492619474529,
+        "Groceries": -0.7916724811931226,
+        "Rent/Mortgage": -0.47793907749283276,
+        "Salary/Income": -0.4638037023817056,
+        "Shopping": 2.8521271244636175,
+        "Subscriptions": -0.9539683844641121,
+        "Transfers": -0.5112932207521573,
+        "Transport": -0.6576001716447878,
+        "Utilities": -0.6058614395859843
+      }
+    },
+    {
+      "token": "wagamama",
+      "mean_abs_coef": 0.8885388021458857,
+      "class_coefficients": {
+        "Dining": 4.442694010729428,
+        "Entertainment": -0.4891439408124018,
+        "Groceries": -0.811216648002351,
+        "Rent/Mortgage": -0.3376492719049057,
+        "Salary/Income": -0.30888385417627,
+        "Shopping": -0.568472403571649,
+        "Subscriptions": -0.5106812458009392,
+        "Transfers": -0.3513759175306859,
+        "Transport": -0.6011727066774043,
+        "Utilities": -0.464098022252821
+      }
+    },
+    {
+      "token": "bp",
+      "mean_abs_coef": 0.8868340846276175,
+      "class_coefficients": {
+        "Dining": -0.7551391270816318,
+        "Entertainment": -0.47475554935777725,
+        "Groceries": -0.7348361980986176,
+        "Rent/Mortgage": -0.32500621725369744,
+        "Salary/Income": -0.30279903498932714,
+        "Shopping": -0.5392433964851097,
+        "Subscriptions": -0.5081322902466492,
+        "Transfers": -0.3447203057743426,
+        "Transport": 4.434170423138085,
+        "Utilities": -0.4495383038509354
+      }
+    },
+    {
+      "token": "nandos",
+      "mean_abs_coef": 0.8655244009365728,
+      "class_coefficients": {
+        "Dining": 4.327622004682866,
+        "Entertainment": -0.4762798586131216,
+        "Groceries": -0.7726291926371814,
+        "Rent/Mortgage": -0.3254254967829961,
+        "Salary/Income": -0.3028774696642044,
+        "Shopping": -0.5529905282481138,
+        "Subscriptions": -0.5101043365963821,
+        "Transfers": -0.34492588898682475,
+        "Transport": -0.5896730810879567,
+        "Utilities": -0.4527161520660798
+      }
+    },
+    {
+      "token": "faster",
+      "mean_abs_coef": 0.861268802465435,
+      "class_coefficients": {
+        "Dining": -0.584381429736142,
+        "Entertainment": -0.48968460290614735,
+        "Groceries": -0.609834418834632,
+        "Rent/Mortgage": -0.4463575637784441,
+        "Salary/Income": 0.5052117838880066,
+        "Shopping": -0.5169131960590746,
+        "Subscriptions": -0.6054704924534302,
+        "Transfers": 3.801132228439167,
+        "Transport": -0.516140388487837,
+        "Utilities": -0.5375619200714695
+      }
+    },
+    {
+      "token": "gym",
+      "mean_abs_coef": 0.8254357868088414,
+      "class_coefficients": {
+        "Dining": -0.576618381692787,
+        "Entertainment": 4.127178934044208,
+        "Groceries": -0.5874759675712707,
+        "Rent/Mortgage": -0.3010514177862434,
+        "Salary/Income": -0.2822608529426084,
+        "Shopping": -0.4476262319117752,
+        "Subscriptions": -0.6472540361802778,
+        "Transfers": -0.3229237675603257,
+        "Transport": -0.4662460164202375,
+        "Utilities": -0.4957222619786786
+      }
+    },
+    {
+      "token": "mortgage",
+      "mean_abs_coef": 0.8093311432263107,
+      "class_coefficients": {
+        "Dining": -0.506065312885129,
+        "Entertainment": -0.4265796645050277,
+        "Groceries": -0.5337931962422147,
+        "Rent/Mortgage": 4.046655716131556,
+        "Salary/Income": -0.3282245098726,
+        "Shopping": -0.4474173422371295,
+        "Subscriptions": -0.5295768890349652,
+        "Transfers": -0.3768375677177023,
+        "Transport": -0.4474601300746566,
+        "Utilities": -0.4507011035621258
+      }
+    },
+    {
+      "token": "apple",
+      "mean_abs_coef": 0.7777272479831532,
+      "class_coefficients": {
+        "Dining": -0.550532412510842,
+        "Entertainment": -0.6447515346592969,
+        "Groceries": -0.5493241716468146,
+        "Rent/Mortgage": -0.3555583472407344,
+        "Salary/Income": -0.34389775521430044,
+        "Shopping": 1.8334652558131728,
+        "Subscriptions": 2.055170984102593,
+        "Transfers": -0.3831642067693828,
+        "Transport": -0.5987937004512625,
+        "Utilities": -0.4626141114231336
+      }
+    },
+    {
+      "token": "uber",
+      "mean_abs_coef": 0.7722096958382927,
+      "class_coefficients": {
+        "Dining": 2.1770967265450367,
+        "Entertainment": -0.5740769410694803,
+        "Groceries": -0.5299115079748441,
+        "Rent/Mortgage": -0.3498761569831117,
+        "Salary/Income": -0.33862561026025395,
+        "Shopping": -0.5957417853941488,
+        "Subscriptions": -0.6360150475406813,
+        "Transfers": -0.3795232801106242,
+        "Transport": 1.683951752646427,
+        "Utilities": -0.45727814985831955
+      }
+    },
+    {
+      "token": "plc",
+      "mean_abs_coef": 0.768925791577256,
+      "class_coefficients": {
+        "Dining": 2.175945969331605,
+        "Entertainment": -0.5656286703898289,
+        "Groceries": -0.6442501021256454,
+        "Rent/Mortgage": -0.42713895250705497,
+        "Salary/Income": 0.888094381462188,
+        "Shopping": -0.5371761249299397,
+        "Subscriptions": -0.641430529729201,
+        "Transfers": -0.483504520693651,
+        "Transport": -0.5455000575109591,
+        "Utilities": 0.7805886070924882
+      }
+    },
+    {
+      "token": "p2p",
+      "mean_abs_coef": 0.7683522078523934,
+      "class_coefficients": {
+        "Dining": -0.42208192191065186,
+        "Entertainment": -0.36055832412357236,
+        "Groceries": -0.43580843376862416,
+        "Rent/Mortgage": -0.5744743201917024,
+        "Salary/Income": -0.4796659025731409,
+        "Shopping": -0.36573754957845517,
+        "Subscriptions": -0.4414500694671063,
+        "Transfers": 3.841761039261967,
+        "Transport": -0.377874397920607,
+        "Utilities": -0.38411011972810644
+      }
+    },
+    {
+      "token": "dwp",
+      "mean_abs_coef": 0.7646204478187693,
+      "class_coefficients": {
+        "Dining": -0.48949497575669265,
+        "Entertainment": -0.4015253601155427,
+        "Groceries": -0.5144413854094777,
+        "Rent/Mortgage": -0.30354719241864675,
+        "Salary/Income": 3.823102239093847,
+        "Shopping": -0.42045303104997434,
+        "Subscriptions": -0.5109840966592981,
+        "Transfers": -0.3393426345172341,
+        "Transport": -0.42143683048169234,
+        "Utilities": -0.4218767326852873
+      }
+    },
+    {
+      "token": "mcdonalds",
+      "mean_abs_coef": 0.7593194819412155,
+      "class_coefficients": {
+        "Dining": 3.7965974097060795,
+        "Entertainment": -0.41538284460833885,
+        "Groceries": -0.6841664177904224,
+        "Rent/Mortgage": -0.28354067932861315,
+        "Salary/Income": -0.26419785013105285,
+        "Shopping": -0.4717656730396893,
+        "Subscriptions": -0.4493451597763981,
+        "Transfers": -0.3011138195732356,
+        "Transport": -0.5312143690242008,
+        "Utilities": -0.3958705964341244
+      }
+    },
+    {
+      "token": "spotify",
+      "mean_abs_coef": 0.7522426749581541,
+      "class_coefficients": {
+        "Dining": -0.5027043362878701,
+        "Entertainment": -0.4189932497748981,
+        "Groceries": -0.5257240173898555,
+        "Rent/Mortgage": -0.3247304679629554,
+        "Salary/Income": -0.31366854634708174,
+        "Shopping": -0.4355916341541056,
+        "Subscriptions": 3.7612133747907692,
+        "Transfers": -0.3574601918479155,
+        "Transport": -0.4392767742037665,
+        "Utilities": -0.4430641568223229
+      }
+    },
+    {
+      "token": "stores",
+      "mean_abs_coef": 0.7477291241856064,
+      "class_coefficients": {
+        "Dining": -0.585903567308969,
+        "Entertainment": -0.41156253699814177,
+        "Groceries": 3.7386456209280325,
+        "Rent/Mortgage": -0.3197207183762322,
+        "Salary/Income": -0.3025800496226321,
+        "Shopping": -0.44564123789625365,
+        "Subscriptions": -0.4596142520059335,
+        "Transfers": -0.33358055959598487,
+        "Transport": -0.4719303397157323,
+        "Utilities": -0.4081123594081524
+      }
+    },
+    {
+      "token": "steamgames",
+      "mean_abs_coef": 0.7440647360042963,
+      "class_coefficients": {
+        "Dining": -0.46673430198532856,
+        "Entertainment": 3.7203236800214823,
+        "Groceries": -0.4680405196055767,
+        "Rent/Mortgage": -0.26326394508543055,
+        "Salary/Income": -0.254896567924469,
+        "Shopping": -0.5825870468054193,
+        "Subscriptions": -0.5584041943114246,
+        "Transfers": -0.290792579942188,
+        "Transport": -0.4797216722156076,
+        "Utilities": -0.35588285214603754
+      }
+    },
+    {
+      "token": "eventbrite",
+      "mean_abs_coef": 0.7307316144528787,
+      "class_coefficients": {
+        "Dining": -0.47873596066224666,
+        "Entertainment": 3.6536580722643937,
+        "Groceries": -0.5026617017924964,
+        "Rent/Mortgage": -0.3001372864337711,
+        "Salary/Income": -0.29092880485682293,
+        "Shopping": -0.4130593851394937,
+        "Subscriptions": -0.4999700784426306,
+        "Transfers": -0.3338175731730771,
+        "Transport": -0.4163780239802561,
+        "Utilities": -0.4179692577835992
+      }
+    },
+    {
+      "token": "bank",
+      "mean_abs_coef": 0.7305238671181289,
+      "class_coefficients": {
+        "Dining": -0.4677980677999352,
+        "Entertainment": -0.3874203275898116,
+        "Groceries": -0.49009585298621317,
+        "Rent/Mortgage": -0.3118402620423012,
+        "Salary/Income": -0.2862552443791427,
+        "Shopping": -0.40196035317664885,
+        "Subscriptions": -0.4900115783794531,
+        "Transfers": 3.6526193355906447,
+        "Transport": -0.40707286668566495,
+        "Utilities": -0.41016478255147315
+      }
+    },
+    {
+      "token": "energy",
+      "mean_abs_coef": 0.7149665178270409,
+      "class_coefficients": {
+        "Dining": -0.4254695048277152,
+        "Entertainment": -0.364723306873158,
+        "Groceries": -0.48209575804183225,
+        "Rent/Mortgage": -0.3040588949200544,
+        "Salary/Income": -0.3215825376775805,
+        "Shopping": -0.48319728377207455,
+        "Subscriptions": -0.4500834430432906,
+        "Transfers": -0.3237791291739172,
+        "Transport": -0.4198427308055833,
+        "Utilities": 3.574832589135202
+      }
+    },
+    {
+      "token": "playstation",
+      "mean_abs_coef": 0.7016962038435307,
+      "class_coefficients": {
+        "Dining": -0.4587387911797537,
+        "Entertainment": 3.508481019217654,
+        "Groceries": -0.4818796208637354,
+        "Rent/Mortgage": -0.28972716155657857,
+        "Salary/Income": -0.2803954704632204,
+        "Shopping": -0.3961518357854749,
+        "Subscriptions": -0.47970133022466677,
+        "Transfers": -0.32173261852586965,
+        "Transport": -0.3994949204342393,
+        "Utilities": -0.40065927018411307
+      }
+    },
+    {
+      "token": "salary",
+      "mean_abs_coef": 0.6934018618348541,
+      "class_coefficients": {
+        "Dining": -0.4225847476648913,
+        "Entertainment": -0.3244387183289059,
+        "Groceries": -0.43534179263473993,
+        "Rent/Mortgage": -0.27842620549659997,
+        "Salary/Income": 3.46700930917427,
+        "Shopping": -0.4014564248717086,
+        "Subscriptions": -0.4081614421998491,
+        "Transfers": -0.4162645125925195,
+        "Transport": -0.3684698273021193,
+        "Utilities": -0.41186563808293686
+      }
+    },
+    {
+      "token": "parkingeye",
+      "mean_abs_coef": 0.6899385860989619,
+      "class_coefficients": {
+        "Dining": -0.4177840552522776,
+        "Entertainment": -0.2872060581902339,
+        "Groceries": -0.5174987712827773,
+        "Rent/Mortgage": -0.2302597536475628,
+        "Salary/Income": -0.2726085316379947,
+        "Shopping": -0.7163013294859963,
+        "Subscriptions": -0.31986793299439836,
+        "Transfers": -0.22245007051554458,
+        "Transport": 3.449692930494809,
+        "Utilities": -0.4657164274880244
+      }
+    },
+    {
+      "token": "bristol",
+      "mean_abs_coef": 0.6878467303124267,
+      "class_coefficients": {
+        "Dining": 0.7745104036534507,
+        "Entertainment": -0.17856770131076963,
+        "Groceries": 1.2476419509167473,
+        "Rent/Mortgage": -0.4172988428295125,
+        "Salary/Income": -0.5709242455721617,
+        "Shopping": 0.24377634673740273,
+        "Subscriptions": -0.8672762741367706,
+        "Transfers": -0.6155041511898235,
+        "Transport": 1.1733049502545334,
+        "Utilities": -0.7896624365230952
+      }
+    },
+    {
+      "token": "vodafone",
+      "mean_abs_coef": 0.6868302410666005,
+      "class_coefficients": {
+        "Dining": -0.3819315391882322,
+        "Entertainment": -0.32500712945241617,
+        "Groceries": -0.4746153592082128,
+        "Rent/Mortgage": -0.2709289925533449,
+        "Salary/Income": -0.3279534728429506,
+        "Shopping": -0.5495223284699107,
+        "Subscriptions": -0.4077160899177228,
+        "Transfers": -0.2762859815715833,
+        "Transport": -0.4201903121286277,
+        "Utilities": 3.434151205333004
+      }
+    },
+    {
+      "token": "ikea ltd",
+      "mean_abs_coef": 0.6862137454194581,
+      "class_coefficients": {
+        "Dining": -0.40983757919780145,
+        "Entertainment": -0.2818538602802464,
+        "Groceries": -0.5621944428373024,
+        "Rent/Mortgage": -0.24585642217623255,
+        "Salary/Income": -0.2978650862415786,
+        "Shopping": 3.4310687270972924,
+        "Subscriptions": -0.2955601632948738,
+        "Transfers": -0.21773356242591663,
+        "Transport": -0.5993777814334408,
+        "Utilities": -0.5207898292098958
+      }
+    },
+    {
+      "token": "ikea",
+      "mean_abs_coef": 0.6862137454194581,
+      "class_coefficients": {
+        "Dining": -0.40983757919780145,
+        "Entertainment": -0.2818538602802464,
+        "Groceries": -0.5621944428373024,
+        "Rent/Mortgage": -0.24585642217623255,
+        "Salary/Income": -0.2978650862415786,
+        "Shopping": 3.4310687270972924,
+        "Subscriptions": -0.2955601632948738,
+        "Transfers": -0.21773356242591663,
+        "Transport": -0.5993777814334408,
+        "Utilities": -0.5207898292098958
+      }
+    },
+    {
+      "token": "sainsburys",
+      "mean_abs_coef": 0.6824195980636512,
+      "class_coefficients": {
+        "Dining": -0.5339465760952539,
+        "Entertainment": -0.37878750330941696,
+        "Groceries": 3.4120979903182556,
+        "Rent/Mortgage": -0.27738668613416845,
+        "Salary/Income": -0.2626087831542517,
+        "Shopping": -0.41631609852923934,
+        "Subscriptions": -0.4366311813557456,
+        "Transfers": -0.2991540540698762,
+        "Transport": -0.4285128975039673,
+        "Utilities": -0.37875421016633637
+      }
+    },
+    {
+      "token": "bus",
+      "mean_abs_coef": 0.6763210437452798,
+      "class_coefficients": {
+        "Dining": -0.503358191312812,
+        "Entertainment": -0.3644000608362526,
+        "Groceries": -0.5092776755950799,
+        "Rent/Mortgage": -0.2757983835380748,
+        "Salary/Income": -0.2593197484472965,
+        "Shopping": -0.3914219287382504,
+        "Subscriptions": -0.4163815007904588,
+        "Transfers": -0.2947625316997453,
+        "Transport": 3.3816052187264005,
+        "Utilities": -0.36688519776842765
+      }
+    },
+    {
+      "token": "adobe",
+      "mean_abs_coef": 0.6758973956076104,
+      "class_coefficients": {
+        "Dining": -0.45521763301497165,
+        "Entertainment": -0.3764022408876533,
+        "Groceries": -0.47573399325477905,
+        "Rent/Mortgage": -0.28816087574161786,
+        "Salary/Income": -0.2787563716542077,
+        "Shopping": -0.39244773078636036,
+        "Subscriptions": 3.3794869780380514,
+        "Transfers": -0.31818178753630344,
+        "Transport": -0.3960197213200322,
+        "Utilities": -0.39856662384212704
+      }
+    },
+    {
+      "token": "council",
+      "mean_abs_coef": 0.6755327369547361,
+      "class_coefficients": {
+        "Dining": -0.478133390479324,
+        "Entertainment": -0.31813386813755395,
+        "Groceries": -0.46283599150035176,
+        "Rent/Mortgage": -0.2325316534741916,
+        "Salary/Income": -0.34211268819256324,
+        "Shopping": -0.3550889392770739,
+        "Subscriptions": -0.3496387936914508,
+        "Transfers": -0.25928161783828674,
+        "Transport": -0.5799067421828845,
+        "Utilities": 3.3776636847736814
+      }
+    },
+    {
+      "token": "nytimes",
+      "mean_abs_coef": 0.674474098181731,
+      "class_coefficients": {
+        "Dining": -0.45318839523339177,
+        "Entertainment": -0.3696074694141361,
+        "Groceries": -0.4984405689582224,
+        "Rent/Mortgage": -0.2839609948541605,
+        "Salary/Income": -0.27470695890785035,
+        "Shopping": -0.3896989260204187,
+        "Subscriptions": 3.372370490908655,
+        "Transfers": -0.3139059315274717,
+        "Transport": -0.39321548696169634,
+        "Utilities": -0.3956457590313061
+      }
+    },
+    {
+      "token": "the",
+      "mean_abs_coef": 0.6744253993725648,
+      "class_coefficients": {
+        "Dining": -0.48395645329711173,
+        "Entertainment": 1.0295205400853147,
+        "Groceries": -0.5115350101046411,
+        "Rent/Mortgage": -0.32683262407023667,
+        "Salary/Income": -0.31287887630367445,
+        "Shopping": -0.4264254512164611,
+        "Subscriptions": 2.342606456777509,
+        "Transfers": -0.35629173086985383,
+        "Transport": -0.43001673285436504,
+        "Utilities": -0.5241901181464808
+      }
+    },
+    {
+      "token": "asda",
+      "mean_abs_coef": 0.6741915996896221,
+      "class_coefficients": {
+        "Dining": -0.45352147819081856,
+        "Entertainment": -0.37545824123094557,
+        "Groceries": 3.3709579984481097,
+        "Rent/Mortgage": -0.2892581259859746,
+        "Salary/Income": -0.27983109265350337,
+        "Shopping": -0.38968091945902694,
+        "Subscriptions": -0.47379477820520427,
+        "Transfers": -0.3186923900697458,
+        "Transport": -0.3937542651604394,
+        "Utilities": -0.39696670749245083
+      }
+    },
+    {
+      "token": "natnorth",
+      "mean_abs_coef": 0.673704969339455,
+      "class_coefficients": {
+        "Dining": -0.43157411711701,
+        "Entertainment": -0.3542102002517396,
+        "Groceries": -0.4512389152965385,
+        "Rent/Mortgage": 3.368524846697277,
+        "Salary/Income": -0.25965952491950617,
+        "Shopping": -0.372572070585666,
+        "Subscriptions": -0.45023999333943626,
+        "Transfers": -0.29870074206005465,
+        "Transport": -0.3747826480334155,
+        "Utilities": -0.37554663509390745
+      }
+    },
+    {
+      "token": "payroll",
+      "mean_abs_coef": 0.6659843534665576,
+      "class_coefficients": {
+        "Dining": -0.4522667413924715,
+        "Entertainment": -0.31651662126512975,
+        "Groceries": -0.4239166201833392,
+        "Rent/Mortgage": -0.2470986996070406,
+        "Salary/Income": 3.329921767332788,
+        "Shopping": -0.4013870684341766,
+        "Subscriptions": -0.39954257023768674,
+        "Transfers": -0.26005598530294566,
+        "Transport": -0.3613086220850614,
+        "Utilities": -0.4678288388249356
+      }
+    },
+    {
+      "token": "dvla",
+      "mean_abs_coef": 0.6655357180441843,
+      "class_coefficients": {
+        "Dining": -0.3549776055688868,
+        "Entertainment": -0.3081168517629384,
+        "Groceries": -0.3694761598228953,
+        "Rent/Mortgage": -0.2487420145349152,
+        "Salary/Income": -0.4163448907041325,
+        "Shopping": -0.31491183696777986,
+        "Subscriptions": -0.3825519076474085,
+        "Transfers": -0.2830776777899623,
+        "Transport": 3.3276785902209225,
+        "Utilities": -0.6494796454220011
+      }
+    },
+    {
+      "token": "ref",
+      "mean_abs_coef": 0.6604094877509612,
+      "class_coefficients": {
+        "Dining": -0.46914427434426503,
+        "Entertainment": -0.4081302691177143,
+        "Groceries": 1.3805250960636006,
+        "Rent/Mortgage": 0.4131837230944047,
+        "Salary/Income": -0.36369344509361495,
+        "Shopping": -0.5440849804413938,
+        "Subscriptions": -0.49802479547068684,
+        "Transfers": 1.5083386195967998,
+        "Transport": -0.4757489731154055,
+        "Utilities": -0.543220701171727
+      }
+    },
+    {
+      "token": "trainline",
+      "mean_abs_coef": 0.6593758233587707,
+      "class_coefficients": {
+        "Dining": -0.41868299503391176,
+        "Entertainment": -0.44763350703310645,
+        "Groceries": -0.4164191618226246,
+        "Rent/Mortgage": -0.22826160044434418,
+        "Salary/Income": -0.22039422892080857,
+        "Shopping": -0.5282323511278386,
+        "Subscriptions": -0.4835579528939898,
+        "Transfers": -0.2495045826235196,
+        "Transport": 3.2968791167938547,
+        "Utilities": -0.3041927368937092
+      }
+    },
+    {
+      "token": "glasgow",
+      "mean_abs_coef": 0.6549084330308145,
+      "class_coefficients": {
+        "Dining": 1.969729176973776,
+        "Entertainment": 0.19197593380375524,
+        "Groceries": 0.7687922169034324,
+        "Rent/Mortgage": -0.5878349221772144,
+        "Salary/Income": -0.5965127412417262,
+        "Shopping": 0.18537688677402145,
+        "Subscriptions": -0.8923422709016227,
+        "Transfers": -0.6335723487665051,
+        "Transport": 0.15866795069908848,
+        "Utilities": -0.5642798820670037
+      }
+    },
+    {
+      "token": "stagecoach",
+      "mean_abs_coef": 0.6523477720033474,
+      "class_coefficients": {
+        "Dining": -0.423256864135043,
+        "Entertainment": -0.35524783341680655,
+        "Groceries": -0.4437768300602451,
+        "Rent/Mortgage": -0.2756435419535618,
+        "Salary/Income": -0.265633246184921,
+        "Shopping": -0.3679599906644868,
+        "Subscriptions": -0.4499472023346115,
+        "Transfers": -0.3037268706584825,
+        "Transport": 3.261738860016738,
+        "Utilities": -0.3765464806085775
+      }
+    },
+    {
+      "token": "trip",
+      "mean_abs_coef": 0.6510775080317244,
+      "class_coefficients": {
+        "Dining": -0.8825176829763269,
+        "Entertainment": -0.33177995644882047,
+        "Groceries": -0.3406716255933896,
+        "Rent/Mortgage": -0.2233640106113914,
+        "Salary/Income": -0.2153987902585235,
+        "Shopping": -0.3442106442693487,
+        "Subscriptions": -0.38210282360703257,
+        "Transfers": -0.24267259649763176,
+        "Transport": 3.2553875401586203,
+        "Utilities": -0.29266940989615864
+      }
+    },
+    {
+      "token": "netflix",
+      "mean_abs_coef": 0.6484636496152343,
+      "class_coefficients": {
+        "Dining": -0.4049173523651072,
+        "Entertainment": -0.4947029912494215,
+        "Groceries": -0.391980177675504,
+        "Rent/Mortgage": -0.21309168753420987,
+        "Salary/Income": -0.20640408046344766,
+        "Shopping": -0.5749644398384754,
+        "Subscriptions": 3.2423182480761708,
+        "Transfers": -0.23264999542545992,
+        "Transport": -0.4405982201416673,
+        "Utilities": -0.2830093033828788
+      }
+    },
+    {
+      "token": "amazon co",
+      "mean_abs_coef": 0.6411815239311681,
+      "class_coefficients": {
+        "Dining": -0.7111825916339845,
+        "Entertainment": -0.3179789851534691,
+        "Groceries": -0.366413771644371,
+        "Rent/Mortgage": -0.17979250870655067,
+        "Salary/Income": -0.1747436928127678,
+        "Shopping": 3.205907619655842,
+        "Subscriptions": -0.8175814750550727,
+        "Transfers": -0.18676844060255438,
+        "Transport": -0.23376534707920849,
+        "Utilities": -0.21768080696786044
+      }
+    },
+    {
+      "token": "microsoft",
+      "mean_abs_coef": 0.6373523381346783,
+      "class_coefficients": {
+        "Dining": -0.4271453367454132,
+        "Entertainment": -0.3547613125192499,
+        "Groceries": -0.4473362986329155,
+        "Rent/Mortgage": -0.27440742927170014,
+        "Salary/Income": -0.2644993377454992,
+        "Shopping": -0.36870943859860367,
+        "Subscriptions": 3.1867616906733924,
+        "Transfers": -0.30213403398690075,
+        "Transport": -0.37226511811661606,
+        "Utilities": -0.3755033850564928
+      }
+    },
+    {
+      "token": "santander",
+      "mean_abs_coef": 0.6351996653787442,
+      "class_coefficients": {
+        "Dining": -0.40406395656019145,
+        "Entertainment": -0.3344679363789537,
+        "Groceries": -0.42317022846674274,
+        "Rent/Mortgage": 3.175998326893721,
+        "Salary/Income": -0.2490430688135311,
+        "Shopping": -0.3497240000067403,
+        "Subscriptions": -0.42302580271757356,
+        "Transfers": -0.28640762583129203,
+        "Transport": -0.35172614835496874,
+        "Utilities": -0.35436955976372686
+      }
+    },
+    {
+      "token": "odeon",
+      "mean_abs_coef": 0.6327847011484158,
+      "class_coefficients": {
+        "Dining": -0.409417295972765,
+        "Entertainment": 3.163923505742079,
+        "Groceries": -0.43062985991394537,
+        "Rent/Mortgage": -0.2666557231538308,
+        "Salary/Income": -0.256553218325894,
+        "Shopping": -0.3553572866407914,
+        "Subscriptions": -0.4299782757850446,
+        "Transfers": -0.2947584333139319,
+        "Transport": -0.3579927442171232,
+        "Utilities": -0.36258066841875247
+      }
+    },
+    {
+      "token": "national",
+      "mean_abs_coef": 0.6284100752404895,
+      "class_coefficients": {
+        "Dining": -0.5194270527163157,
+        "Entertainment": -0.33935703865457756,
+        "Groceries": -0.5222394892797781,
+        "Rent/Mortgage": -0.23543008781493158,
+        "Salary/Income": -0.21712301653435157,
+        "Shopping": -0.383404110046317,
+        "Subscriptions": -0.3592933639296761,
+        "Transfers": -0.24749949786572775,
+        "Transport": 3.142050376202447,
+        "Utilities": -0.3182767193607727
+      }
+    },
+    {
+      "token": "halifax",
+      "mean_abs_coef": 0.6282590820405809,
+      "class_coefficients": {
+        "Dining": -0.4014412591541214,
+        "Entertainment": -0.3306370285062725,
+        "Groceries": -0.4202255080309433,
+        "Rent/Mortgage": 3.1412954102029045,
+        "Salary/Income": -0.24366072565602365,
+        "Shopping": -0.3457043809930775,
+        "Subscriptions": -0.42035984809173854,
+        "Transfers": -0.2803930191001719,
+        "Transport": -0.3482701140290928,
+        "Utilities": -0.3506035266414626
+      }
+    },
+    {
+      "token": "ticketmaster",
+      "mean_abs_coef": 0.6246358210361704,
+      "class_coefficients": {
+        "Dining": -0.46072612989914014,
+        "Entertainment": 3.123179105180852,
+        "Groceries": -0.3498731098848936,
+        "Rent/Mortgage": -0.22047221705488587,
+        "Salary/Income": -0.21297728272022998,
+        "Shopping": -0.7084032084611187,
+        "Subscriptions": -0.3361960740718041,
+        "Transfers": -0.24374881839019696,
+        "Transport": -0.2926057259345315,
+        "Utilities": -0.29817653876405265
+      }
+    },
+    {
+      "token": "edinburgh",
+      "mean_abs_coef": 0.618797700848844,
+      "class_coefficients": {
+        "Dining": 1.270428022262273,
+        "Entertainment": -0.1381515687935149,
+        "Groceries": 1.3499477537301232,
+        "Rent/Mortgage": -0.48079521721021096,
+        "Salary/Income": -0.5401908995119022,
+        "Shopping": 0.09475625208194716,
+        "Subscriptions": -0.813836235872864,
+        "Transfers": -0.572586650352543,
+        "Transport": 0.3788564761698766,
+        "Utilities": -0.5484279325031849
+      }
+    },
+    {
+      "token": "p2p payment",
+      "mean_abs_coef": 0.6187846936085936,
+      "class_coefficients": {
+        "Dining": -0.32677830607385877,
+        "Entertainment": -0.28319514534829854,
+        "Groceries": -0.33592701132311026,
+        "Rent/Mortgage": -0.49196270749860177,
+        "Salary/Income": -0.43058037186891707,
+        "Shopping": -0.28531454034187526,
+        "Subscriptions": -0.3419450660226167,
+        "Transfers": 3.0939234680429686,
+        "Transport": -0.2961364796004693,
+        "Utilities": -0.30208383996521915
+      }
+    },
+    {
+      "token": "john",
+      "mean_abs_coef": 0.6174011901103904,
+      "class_coefficients": {
+        "Dining": -0.5197691586664935,
+        "Entertainment": -0.32712458230668157,
+        "Groceries": -0.5166199005192923,
+        "Rent/Mortgage": -0.23469763332102714,
+        "Salary/Income": -0.2165066941812659,
+        "Shopping": 3.087005950551951,
+        "Subscriptions": -0.34467876823738186,
+        "Transfers": -0.24277903296890124,
+        "Transport": -0.37519534966734064,
+        "Utilities": -0.30963483068356773
+      }
+    },
+    {
+      "token": "next",
+      "mean_abs_coef": 0.6152270204025944,
+      "class_coefficients": {
+        "Dining": -0.35171704560810446,
+        "Entertainment": -0.30079567886407704,
+        "Groceries": -0.4256062527885035,
+        "Rent/Mortgage": -0.2518743229434741,
+        "Salary/Income": -0.2805201877282416,
+        "Shopping": 3.076135102012972,
+        "Subscriptions": -0.3770042568248762,
+        "Transfers": -0.25618362138639617,
+        "Transport": -0.3726910811116677,
+        "Utilities": -0.4597426547576306
+      }
+    },
+    {
+      "token": "deliveroo",
+      "mean_abs_coef": 0.6151379162404621,
+      "class_coefficients": {
+        "Dining": 3.0756895812023113,
+        "Entertainment": -0.32794870766134426,
+        "Groceries": -0.3827817012474365,
+        "Rent/Mortgage": -0.17725233832794812,
+        "Salary/Income": -0.17153235395001123,
+        "Shopping": -1.0432409608245317,
+        "Subscriptions": -0.29122741121355705,
+        "Transfers": -0.19510319341487803,
+        "Transport": -0.25055224219215994,
+        "Utilities": -0.2360506723704421
+      }
+    },
+    {
+      "token": "food",
+      "mean_abs_coef": 0.6117358682634296,
+      "class_coefficients": {
+        "Dining": -0.5428320814015513,
+        "Entertainment": -0.32858210252970316,
+        "Groceries": 3.0586793413171485,
+        "Rent/Mortgage": -0.23558829153173697,
+        "Salary/Income": -0.21888775955221884,
+        "Shopping": -0.43733361354822603,
+        "Subscriptions": -0.3617943208607007,
+        "Transfers": -0.24646794248334133,
+        "Transport": -0.38259921764831,
+        "Utilities": -0.3045940117613593
+      }
+    },
+    {
+      "token": "rightmove",
+      "mean_abs_coef": 0.6111446438549789,
+      "class_coefficients": {
+        "Dining": -0.376494044939515,
+        "Entertainment": -0.30942753206357965,
+        "Groceries": -0.4671003852524382,
+        "Rent/Mortgage": 3.0557232192748938,
+        "Salary/Income": -0.22454091537039741,
+        "Shopping": -0.3260299639101027,
+        "Subscriptions": -0.40254908966351644,
+        "Transfers": -0.29961063500784657,
+        "Transport": -0.3246100307215004,
+        "Utilities": -0.3253606223459989
+      }
+    },
+    {
+      "token": "lewis",
+      "mean_abs_coef": 0.6108422248304464,
+      "class_coefficients": {
+        "Dining": -0.4831290961319309,
+        "Entertainment": -0.3268421102132795,
+        "Groceries": -0.5071232602638261,
+        "Rent/Mortgage": -0.23787710485704452,
+        "Salary/Income": -0.21748979764459014,
+        "Shopping": 3.0542111241522307,
+        "Subscriptions": -0.3492320270464549,
+        "Transfers": -0.24438529036865192,
+        "Transport": -0.3704833695806433,
+        "Utilities": -0.3176490680458111
+      }
+    },
+    {
+      "token": "argos ltd",
+      "mean_abs_coef": 0.6046863830177245,
+      "class_coefficients": {
+        "Dining": -0.3672989095614243,
+        "Entertainment": -0.2509996800687901,
+        "Groceries": -0.5104987651890748,
+        "Rent/Mortgage": -0.21436494810832268,
+        "Salary/Income": -0.2639913309993988,
+        "Shopping": 3.0234319150886226,
+        "Subscriptions": -0.25937825401180614,
+        "Transfers": -0.18914570217593732,
+        "Transport": -0.4910528655577603,
+        "Utilities": -0.47670145941610836
+      }
+    },
+    {
+      "token": "argos",
+      "mean_abs_coef": 0.6046863830177245,
+      "class_coefficients": {
+        "Dining": -0.3672989095614243,
+        "Entertainment": -0.2509996800687901,
+        "Groceries": -0.5104987651890748,
+        "Rent/Mortgage": -0.21436494810832268,
+        "Salary/Income": -0.2639913309993988,
+        "Shopping": 3.0234319150886226,
+        "Subscriptions": -0.25937825401180614,
+        "Transfers": -0.18914570217593732,
+        "Transport": -0.4910528655577603,
+        "Utilities": -0.47670145941610836
+      }
+    },
+    {
+      "token": "revolut",
+      "mean_abs_coef": 0.6026476694438475,
+      "class_coefficients": {
+        "Dining": -0.38356583644980646,
+        "Entertainment": -0.3217192954689367,
+        "Groceries": -0.4007311327533308,
+        "Rent/Mortgage": -0.2550386533185988,
+        "Salary/Income": -0.24714018276171354,
+        "Shopping": -0.3294178661934838,
+        "Subscriptions": -0.4008719216189978,
+        "Transfers": 3.0132383472192386,
+        "Transport": -0.3342249828112006,
+        "Utilities": -0.3405284758431688
+      }
+    },
+    {
+      "token": "gb",
+      "mean_abs_coef": 0.5964729292232144,
+      "class_coefficients": {
+        "Dining": -0.5076036006131492,
+        "Entertainment": -0.326931157855721,
+        "Groceries": 2.9823646461160704,
+        "Rent/Mortgage": -0.23933253308142716,
+        "Salary/Income": -0.22533881214329168,
+        "Shopping": -0.3665180537600576,
+        "Subscriptions": -0.3684032752962668,
+        "Transfers": -0.25574248100702,
+        "Transport": -0.3697628342010396,
+        "Utilities": -0.32273189815809983
+      }
+    },
+    {
+      "token": "apple com",
+      "mean_abs_coef": 0.5957605899951869,
+      "class_coefficients": {
+        "Dining": -0.4019628403052077,
+        "Entertainment": -0.5454251864235966,
+        "Groceries": -0.3868952008091012,
+        "Rent/Mortgage": -0.26764073572023783,
+        "Salary/Income": -0.2596248572809224,
+        "Shopping": 1.5463509810127687,
+        "Subscriptions": 1.432451968963166,
+        "Transfers": -0.2863024808393402,
+        "Transport": -0.49170781392858043,
+        "Utilities": -0.3392438346689476
+      }
+    },
+    {
+      "token": "thames",
+      "mean_abs_coef": 0.593678174001804,
+      "class_coefficients": {
+        "Dining": -0.39004008837976095,
+        "Entertainment": -0.32270632783338377,
+        "Groceries": -0.4086365087045502,
+        "Rent/Mortgage": -0.24738080578284816,
+        "Salary/Income": -0.2387616756240428,
+        "Shopping": -0.33759708389454546,
+        "Subscriptions": -0.4086568845298913,
+        "Transfers": -0.27489387608609084,
+        "Transport": -0.33971761917390686,
+        "Utilities": 2.9683908700090185
+      }
+    },
+    {
+      "token": "scottish",
+      "mean_abs_coef": 0.5920880095208296,
+      "class_coefficients": {
+        "Dining": -0.3919326916015496,
+        "Entertainment": -0.32138923349821197,
+        "Groceries": -0.40972822519958857,
+        "Rent/Mortgage": -0.24231816465001607,
+        "Salary/Income": -0.23505518398390307,
+        "Shopping": -0.3370111852916431,
+        "Subscriptions": -0.40896144862737827,
+        "Transfers": -0.2747800636304874,
+        "Transport": -0.33926385112137,
+        "Utilities": 2.9604400476041492
+      }
+    },
+    {
+      "token": "lidl",
+      "mean_abs_coef": 0.5905717164320803,
+      "class_coefficients": {
+        "Dining": -0.47974332142691384,
+        "Entertainment": -0.3243296898262208,
+        "Groceries": 2.9528585821604008,
+        "Rent/Mortgage": -0.24226262316441335,
+        "Salary/Income": -0.2234742032053732,
+        "Shopping": -0.36889519824109224,
+        "Subscriptions": -0.3636225227928703,
+        "Transfers": -0.25363232935805513,
+        "Transport": -0.369530410925238,
+        "Utilities": -0.3273682832202256
+      }
+    },
+    {
+      "token": "manchester",
+      "mean_abs_coef": 0.5882194642711032,
+      "class_coefficients": {
+        "Dining": 1.1025943704671988,
+        "Entertainment": -0.13118337646118383,
+        "Groceries": 0.7768977368346107,
+        "Rent/Mortgage": -0.4590160895679196,
+        "Salary/Income": -0.5410557708295028,
+        "Shopping": 0.048044797739943426,
+        "Subscriptions": -0.7726312157113758,
+        "Transfers": -0.5439278897478554,
+        "Transport": 1.0135604163137637,
+        "Utilities": -0.4932829790376777
+      }
+    },
+    {
+      "token": "edf",
+      "mean_abs_coef": 0.5847452664322599,
+      "class_coefficients": {
+        "Dining": -0.3849140037272119,
+        "Entertainment": -0.3186577129450327,
+        "Groceries": -0.4020815156670888,
+        "Rent/Mortgage": -0.24611692883090108,
+        "Salary/Income": -0.23600586847257768,
+        "Shopping": -0.3265843431336812,
+        "Subscriptions": -0.404092297716155,
+        "Transfers": -0.2724379338381601,
+        "Transport": -0.3328357278304898,
+        "Utilities": 2.9237263321613
+      }
+    },
+    {
+      "token": "leeds",
+      "mean_abs_coef": 0.584733799394681,
+      "class_coefficients": {
+        "Dining": 1.1437020104180118,
+        "Entertainment": -0.10567958325967189,
+        "Groceries": 0.834499390114524,
+        "Rent/Mortgage": -0.3773768366927497,
+        "Salary/Income": -0.550680894238132,
+        "Shopping": 0.6982993276532746,
+        "Subscriptions": -0.822794412863647,
+        "Transfers": -0.5828982508445267,
+        "Transport": 0.24716826878759446,
+        "Utilities": -0.4842390190746782
+      }
+    },
+    {
+      "token": "cinemas",
+      "mean_abs_coef": 0.5845335713068459,
+      "class_coefficients": {
+        "Dining": -0.3779265125844211,
+        "Entertainment": 2.922667856534229,
+        "Groceries": -0.39756540491873515,
+        "Rent/Mortgage": -0.24660462036637734,
+        "Salary/Income": -0.23729313979245586,
+        "Shopping": -0.3282679396534079,
+        "Subscriptions": -0.39687641668285123,
+        "Transfers": -0.27270415972018813,
+        "Transport": -0.33056958861737895,
+        "Utilities": -0.33486007419841474
+      }
+    },
+    {
+      "token": "pension",
+      "mean_abs_coef": 0.5840037369309793,
+      "class_coefficients": {
+        "Dining": -0.3362513914263355,
+        "Entertainment": -0.2654577697981494,
+        "Groceries": -0.35578243110550417,
+        "Rent/Mortgage": -0.32024601955634857,
+        "Salary/Income": 2.9200186846548974,
+        "Shopping": -0.3191432537278682,
+        "Subscriptions": -0.3319890372874025,
+        "Transfers": -0.36766701913923827,
+        "Transport": -0.2972130553192249,
+        "Utilities": -0.3262687072948245
+      }
+    },
+    {
+      "token": "london",
+      "mean_abs_coef": 0.5822442687149776,
+      "class_coefficients": {
+        "Dining": 0.9329555589874694,
+        "Entertainment": 0.21692374407594092,
+        "Groceries": 0.7496970625153043,
+        "Rent/Mortgage": -0.2910636089945872,
+        "Salary/Income": -0.5741901677937838,
+        "Shopping": 0.4900623491864434,
+        "Subscriptions": -0.8428542234578166,
+        "Transfers": -0.5979388059866296,
+        "Transport": 0.5215826288097298,
+        "Utilities": -0.6051745373420706
+      }
+    },
+    {
+      "token": "bill",
+      "mean_abs_coef": 0.5766522324409112,
+      "class_coefficients": {
+        "Dining": -0.4019859432218123,
+        "Entertainment": -0.4943502064840825,
+        "Groceries": -0.3938492016100532,
+        "Rent/Mortgage": -0.2651546867970221,
+        "Salary/Income": -0.25715976517625677,
+        "Shopping": 2.4629093024311066,
+        "Subscriptions": 0.4203518597734502,
+        "Transfers": -0.28369731665289016,
+        "Transport": -0.4509072218449464,
+        "Utilities": -0.3361568204174924
+      }
+    },
+    {
+      "token": "parkingeye ltd",
+      "mean_abs_coef": 0.5726816451076844,
+      "class_coefficients": {
+        "Dining": -0.3363437518973771,
+        "Entertainment": -0.2175285307789664,
+        "Groceries": -0.440033656295518,
+        "Rent/Mortgage": -0.17964100244858286,
+        "Salary/Income": -0.22606584090379261,
+        "Shopping": -0.6726006709426156,
+        "Subscriptions": -0.22541475007787953,
+        "Transfers": -0.1635844741646455,
+        "Transport": 2.863408225538422,
+        "Utilities": -0.40219554802904384
+      }
+    },
+    {
+      "token": "shell",
+      "mean_abs_coef": 0.5695569571997809,
+      "class_coefficients": {
+        "Dining": -0.439030121901774,
+        "Entertainment": -0.30551006638171063,
+        "Groceries": -0.43925758120049235,
+        "Rent/Mortgage": -0.21903039651003203,
+        "Salary/Income": -0.20800667145965912,
+        "Shopping": -0.33404016378606516,
+        "Subscriptions": -0.35737538217743203,
+        "Transfers": -0.23757232748801968,
+        "Transport": 2.847784785998904,
+        "Utilities": -0.3079620750937207
+      }
+    },
+    {
+      "token": "pret",
+      "mean_abs_coef": 0.5694260920968987,
+      "class_coefficients": {
+        "Dining": 2.847130460484493,
+        "Entertainment": -0.3142115312151366,
+        "Groceries": -0.4612148350102068,
+        "Rent/Mortgage": -0.2273579555768637,
+        "Salary/Income": -0.21369237902973284,
+        "Shopping": -0.34808584021705324,
+        "Subscriptions": -0.36440920410049243,
+        "Transfers": -0.24419608711597288,
+        "Transport": -0.35746319422614475,
+        "Utilities": -0.3164994339928895
+      }
+    },
+    {
+      "token": "disney",
+      "mean_abs_coef": 0.5686596213978231,
+      "class_coefficients": {
+        "Dining": -0.38325785654063804,
+        "Entertainment": -0.316683690773892,
+        "Groceries": -0.39977939361846265,
+        "Rent/Mortgage": -0.2416433913826484,
+        "Salary/Income": -0.23482771905162053,
+        "Shopping": -0.33120029760680886,
+        "Subscriptions": 2.843298106989117,
+        "Transfers": -0.26742959869887295,
+        "Transport": -0.3332110535114459,
+        "Utilities": -0.3352651058047238
+      }
+    },
+    {
+      "token": "just",
+      "mean_abs_coef": 0.5666938775062793,
+      "class_coefficients": {
+        "Dining": 2.833469387531397,
+        "Entertainment": -0.3148769286195577,
+        "Groceries": -0.507089532546238,
+        "Rent/Mortgage": -0.2145185364619349,
+        "Salary/Income": -0.19711001553848498,
+        "Shopping": -0.37191554214845196,
+        "Subscriptions": -0.3231306529467907,
+        "Transfers": -0.22438623402072805,
+        "Transport": -0.3877317440754128,
+        "Utilities": -0.29271020117379604
+      }
+    },
+    {
+      "token": "employer",
+      "mean_abs_coef": 0.5645937069999506,
+      "class_coefficients": {
+        "Dining": -0.36562891638122935,
+        "Entertainment": -0.28206702827841384,
+        "Groceries": -0.3773888678589644,
+        "Rent/Mortgage": -0.21825725419840572,
+        "Salary/Income": 2.822968534999753,
+        "Shopping": -0.32923859885641615,
+        "Subscriptions": -0.3607747658705925,
+        "Transfers": -0.23723624653087005,
+        "Transport": -0.3131882773351608,
+        "Utilities": -0.33918857968970034
+      }
+    },
+    {
+      "token": "ocado",
+      "mean_abs_coef": 0.5618115591184681,
+      "class_coefficients": {
+        "Dining": -0.24460488595457222,
+        "Entertainment": -0.22187664252165,
+        "Groceries": 2.8090577955923384,
+        "Rent/Mortgage": -0.2607893333709771,
+        "Salary/Income": -0.25839187652351336,
+        "Shopping": -0.4658242212520493,
+        "Subscriptions": -0.2690849848247772,
+        "Transfers": -0.3251727717379705,
+        "Transport": -0.32205397554426,
+        "Utilities": -0.441259103862573
+      }
+    },
+    {
+      "token": "standing",
+      "mean_abs_coef": 0.5552720329217188,
+      "class_coefficients": {
+        "Dining": -0.35441187399664326,
+        "Entertainment": -0.29459186194780207,
+        "Groceries": -0.3674183248878904,
+        "Rent/Mortgage": -0.23795369598022836,
+        "Salary/Income": -0.2200468402943243,
+        "Shopping": -0.3038910108500969,
+        "Subscriptions": -0.3718271264717647,
+        "Transfers": 2.7763601646085934,
+        "Transport": -0.3094827034895727,
+        "Utilities": -0.3167367266902719
+      }
+    },
+    {
+      "token": "council tax",
+      "mean_abs_coef": 0.5547290710450727,
+      "class_coefficients": {
+        "Dining": -0.40339010237387307,
+        "Entertainment": -0.2544068088636205,
+        "Groceries": -0.3835653474157673,
+        "Rent/Mortgage": -0.1815367850146663,
+        "Salary/Income": -0.3004981947867694,
+        "Shopping": -0.28933902515747983,
+        "Subscriptions": -0.26491435112052525,
+        "Transfers": -0.1903894813346752,
+        "Transport": -0.5056052591579878,
+        "Utilities": 2.773645355225362
+      }
+    },
+    {
+      "token": "co uk",
+      "mean_abs_coef": 0.5546540784773829,
+      "class_coefficients": {
+        "Dining": 1.3830146823728258,
+        "Entertainment": -0.4552538519657234,
+        "Groceries": -0.4461575664954258,
+        "Rent/Mortgage": -0.22894988715627085,
+        "Salary/Income": -0.22283564600011313,
+        "Shopping": 1.3902557100140898,
+        "Subscriptions": -0.597804727769455,
+        "Transfers": -0.24162197997075782,
+        "Transport": -0.2986835044337446,
+        "Utilities": -0.28196322859542355
+      }
+    },
+    {
+      "token": "aldi",
+      "mean_abs_coef": 0.5536944496055525,
+      "class_coefficients": {
+        "Dining": -0.3612672827050742,
+        "Entertainment": -0.3095102997066201,
+        "Groceries": 2.7684722480277606,
+        "Rent/Mortgage": -0.24697240382831084,
+        "Salary/Income": -0.23945976199457775,
+        "Shopping": -0.31382338781540353,
+        "Subscriptions": -0.38470710744083364,
+        "Transfers": -0.2667670690476072,
+        "Transport": -0.31840418730990694,
+        "Utilities": -0.3275607481794297
+      }
+    },
+    {
+      "token": "bacs",
+      "mean_abs_coef": 0.5535732491097161,
+      "class_coefficients": {
+        "Dining": -0.36741751101938036,
+        "Entertainment": -0.2642783744255037,
+        "Groceries": -0.36546785576737767,
+        "Rent/Mortgage": -0.21253386271978408,
+        "Salary/Income": 2.7678662455485803,
+        "Shopping": -0.340874352247511,
+        "Subscriptions": -0.3319579258953966,
+        "Transfers": -0.2231755530435247,
+        "Transport": -0.3067349552772686,
+        "Utilities": -0.35542585515283354
+      }
+    },
+    {
+      "token": "co",
+      "mean_abs_coef": 0.5516961443681561,
+      "class_coefficients": {
+        "Dining": 0.7671465512395403,
+        "Entertainment": -0.2210160485893351,
+        "Groceries": 0.6996183122664718,
+        "Rent/Mortgage": -0.4835494818502643,
+        "Salary/Income": -0.4651263824988209,
+        "Shopping": 1.2917158583347697,
+        "Subscriptions": -0.228849316042011,
+        "Transfers": -0.5174882554371842,
+        "Transport": -0.21595259844042913,
+        "Utilities": -0.6264986389827352
+      }
+    },
+    {
+      "token": "liverpool",
+      "mean_abs_coef": 0.5498244992707013,
+      "class_coefficients": {
+        "Dining": 0.9906930825696348,
+        "Entertainment": -0.05416479476275601,
+        "Groceries": 0.5422460766093161,
+        "Rent/Mortgage": -0.2890231112877477,
+        "Salary/Income": -0.5309113619895756,
+        "Shopping": 0.2799308615369988,
+        "Subscriptions": -0.780005486246887,
+        "Transfers": -0.5470516859830399,
+        "Transport": 0.9362524756375553,
+        "Utilities": -0.5479660560835016
+      }
+    },
+    {
+      "token": "tesco",
+      "mean_abs_coef": 0.5479280970621229,
+      "class_coefficients": {
+        "Dining": -0.46980391433769625,
+        "Entertainment": -0.3030931389355489,
+        "Groceries": 2.739640485310614,
+        "Rent/Mortgage": -0.22012646655863188,
+        "Salary/Income": -0.2052712824298859,
+        "Shopping": -0.3296865611164472,
+        "Subscriptions": -0.331046621624169,
+        "Transfers": -0.23162795126602448,
+        "Transport": -0.35596440405035795,
+        "Utilities": -0.2930201449918531
+      }
+    },
+    {
+      "token": "northstar",
+      "mean_abs_coef": 0.5458877645373621,
+      "class_coefficients": {
+        "Dining": -0.4761171942420246,
+        "Entertainment": -0.2582572117624784,
+        "Groceries": -0.32907617091332897,
+        "Rent/Mortgage": -0.21279230263466434,
+        "Salary/Income": 2.729438822686809,
+        "Shopping": -0.2660658503083895,
+        "Subscriptions": -0.32720998477653723,
+        "Transfers": -0.25720352763602583,
+        "Transport": -0.2717340174328286,
+        "Utilities": -0.33098256298053447
+      }
+    },
+    {
+      "token": "deliveroo co",
+      "mean_abs_coef": 0.5429132500002181,
+      "class_coefficients": {
+        "Dining": 2.714566250001092,
+        "Entertainment": -0.28716528725152235,
+        "Groceries": -0.32812734099072816,
+        "Rent/Mortgage": -0.14528186659806175,
+        "Salary/Income": -0.14090279606869058,
+        "Shopping": -1.0283108995738326,
+        "Subscriptions": -0.23292298545421541,
+        "Transfers": -0.15914388788324124,
+        "Transport": -0.20397893947497092,
+        "Utilities": -0.18873224670582614
+      }
+    },
+    {
+      "token": "octopus",
+      "mean_abs_coef": 0.5426930230735143,
+      "class_coefficients": {
+        "Dining": -0.3231620623077777,
+        "Entertainment": -0.26977314442419253,
+        "Groceries": -0.37839391724749044,
+        "Rent/Mortgage": -0.21723440386046125,
+        "Salary/Income": -0.23952880457221817,
+        "Shopping": -0.3874936095081865,
+        "Subscriptions": -0.343802271930683,
+        "Transfers": -0.2284837625918318,
+        "Transport": -0.32559313892473113,
+        "Utilities": 2.713465115367571
+      }
+    },
+    {
+      "token": "ticketmaster uk",
+      "mean_abs_coef": 0.5421954703579194,
+      "class_coefficients": {
+        "Dining": -0.40876669101572705,
+        "Entertainment": 2.710977351789595,
+        "Groceries": -0.2875139921781898,
+        "Rent/Mortgage": -0.186043216103301,
+        "Salary/Income": -0.17992544272356542,
+        "Shopping": -0.6789745197609147,
+        "Subscriptions": -0.27377136523287315,
+        "Transfers": -0.20525160094131165,
+        "Transport": -0.24276366976789826,
+        "Utilities": -0.2479668540658177
+      }
+    },
+    {
+      "token": "pizza",
+      "mean_abs_coef": 0.5402121699800095,
+      "class_coefficients": {
+        "Dining": 2.7010608499000472,
+        "Entertainment": -0.29248368820641363,
+        "Groceries": -0.49091551906061887,
+        "Rent/Mortgage": -0.2123110404119114,
+        "Salary/Income": -0.19646492980637234,
+        "Shopping": -0.328808600081255,
+        "Subscriptions": -0.32618681799528937,
+        "Transfers": -0.22493042524669396,
+        "Transport": -0.34239990656952846,
+        "Utilities": -0.28655992252196505
+      }
+    },
+    {
+      "token": "currys",
+      "mean_abs_coef": 0.5366785038155325,
+      "class_coefficients": {
+        "Dining": -0.33346508295133476,
+        "Entertainment": -0.3348559736142569,
+        "Groceries": -0.3540966991249956,
+        "Rent/Mortgage": -0.22949423896178484,
+        "Salary/Income": -0.2208942925726133,
+        "Shopping": 2.683392519077661,
+        "Subscriptions": -0.3590137884924718,
+        "Transfers": -0.24817296518588625,
+        "Transport": -0.29931664548662923,
+        "Utilities": -0.3040828326876911
+      }
+    },
+    {
+      "token": "pc",
+      "mean_abs_coef": 0.5366785038155325,
+      "class_coefficients": {
+        "Dining": -0.33346508295133476,
+        "Entertainment": -0.3348559736142569,
+        "Groceries": -0.3540966991249956,
+        "Rent/Mortgage": -0.22949423896178484,
+        "Salary/Income": -0.2208942925726133,
+        "Shopping": 2.683392519077661,
+        "Subscriptions": -0.3590137884924718,
+        "Transfers": -0.24817296518588625,
+        "Transport": -0.29931664548662923,
+        "Utilities": -0.3040828326876911
+      }
+    },
+    {
+      "token": "currys pc",
+      "mean_abs_coef": 0.5366785038155325,
+      "class_coefficients": {
+        "Dining": -0.33346508295133476,
+        "Entertainment": -0.3348559736142569,
+        "Groceries": -0.3540966991249956,
+        "Rent/Mortgage": -0.22949423896178484,
+        "Salary/Income": -0.2208942925726133,
+        "Shopping": 2.683392519077661,
+        "Subscriptions": -0.3590137884924718,
+        "Transfers": -0.24817296518588625,
+        "Transport": -0.29931664548662923,
+        "Utilities": -0.3040828326876911
+      }
+    },
+    {
+      "token": "group",
+      "mean_abs_coef": 0.5366573379078641,
+      "class_coefficients": {
+        "Dining": -0.45987724889547676,
+        "Entertainment": 1.0164687649895403,
+        "Groceries": -0.3600358077896689,
+        "Rent/Mortgage": -0.230685179376326,
+        "Salary/Income": -0.26288513487474746,
+        "Shopping": -0.3039399475041643,
+        "Subscriptions": -0.5072871114381442,
+        "Transfers": -0.2536274466054538,
+        "Transport": -0.30494881305533883,
+        "Utilities": 1.6668179245497805
+      }
+    },
+    {
+      "token": "marks",
+      "mean_abs_coef": 0.5364406623833144,
+      "class_coefficients": {
+        "Dining": -0.40391466723216407,
+        "Entertainment": -0.2982078512698325,
+        "Groceries": 2.682203311916573,
+        "Rent/Mortgage": -0.22216324183145436,
+        "Salary/Income": -0.2087539672459117,
+        "Shopping": -0.3184160237545235,
+        "Subscriptions": -0.3538762678205357,
+        "Transfers": -0.2388640523679613,
+        "Transport": -0.3353429827005679,
+        "Utilities": -0.3026642576936201
+      }
+    },
+    {
+      "token": "john lewis",
+      "mean_abs_coef": 0.535559623710015,
+      "class_coefficients": {
+        "Dining": -0.4187513852871569,
+        "Entertainment": -0.28845722435856647,
+        "Groceries": -0.43067137916942655,
+        "Rent/Mortgage": -0.21071288142205527,
+        "Salary/Income": -0.19580351080465241,
+        "Shopping": 2.677798118550075,
+        "Subscriptions": -0.3114484047533716,
+        "Transfers": -0.21933320311404222,
+        "Transport": -0.3262855491612906,
+        "Utilities": -0.27633458047951204
+      }
+    },
+    {
+      "token": "lidl gb",
+      "mean_abs_coef": 0.5347132704207416,
+      "class_coefficients": {
+        "Dining": -0.4199004056094785,
+        "Entertainment": -0.2939266687748435,
+        "Groceries": 2.6735663521037085,
+        "Rent/Mortgage": -0.22095023405250905,
+        "Salary/Income": -0.2077686207865131,
+        "Shopping": -0.3292258423628333,
+        "Subscriptions": -0.3383393342916302,
+        "Transfers": -0.23546469206690873,
+        "Transport": -0.3331084280231148,
+        "Utilities": -0.2948821261358759
+      }
+    },
+    {
+      "token": "bt",
+      "mean_abs_coef": 0.5284672244751076,
+      "class_coefficients": {
+        "Dining": -0.5741405969657988,
+        "Entertainment": -0.3561245051705969,
+        "Groceries": -0.2928257604250855,
+        "Rent/Mortgage": -0.18310840146308957,
+        "Salary/Income": -0.25810631562363473,
+        "Shopping": -0.2456115001390154,
+        "Subscriptions": -0.2849982370572736,
+        "Transfers": -0.20062823152229595,
+        "Transport": -0.2467925740087478,
+        "Utilities": 2.642336122375538
+      }
+    },
+    {
+      "token": "costa",
+      "mean_abs_coef": 0.5238420408102099,
+      "class_coefficients": {
+        "Dining": 2.6192102040510483,
+        "Entertainment": -0.289614144452443,
+        "Groceries": -0.36214886838236554,
+        "Rent/Mortgage": -0.22752233897109858,
+        "Salary/Income": -0.2188756808899403,
+        "Shopping": -0.29895061335540035,
+        "Subscriptions": -0.3634094251117603,
+        "Transfers": -0.24959342571917126,
+        "Transport": -0.30307501009541965,
+        "Utilities": -0.3060206970734512
+      }
+    },
+    {
+      "token": "coffee",
+      "mean_abs_coef": 0.5238420408102099,
+      "class_coefficients": {
+        "Dining": 2.6192102040510483,
+        "Entertainment": -0.289614144452443,
+        "Groceries": -0.36214886838236554,
+        "Rent/Mortgage": -0.22752233897109858,
+        "Salary/Income": -0.2188756808899403,
+        "Shopping": -0.29895061335540035,
+        "Subscriptions": -0.3634094251117603,
+        "Transfers": -0.24959342571917126,
+        "Transport": -0.30307501009541965,
+        "Utilities": -0.3060206970734512
+      }
+    },
+    {
+      "token": "network",
+      "mean_abs_coef": 0.5232674101758368,
+      "class_coefficients": {
+        "Dining": -0.33968114976388863,
+        "Entertainment": 2.6163370508791863,
+        "Groceries": -0.3570048187096522,
+        "Rent/Mortgage": -0.21360966609329224,
+        "Salary/Income": -0.20633165518661686,
+        "Shopping": -0.29249717036177997,
+        "Subscriptions": -0.3557184344799825,
+        "Transfers": -0.2373564492117779,
+        "Transport": -0.2949410089408382,
+        "Utilities": -0.3191966981313542
+      }
+    },
+    {
+      "token": "superstore",
+      "mean_abs_coef": 0.522263319186752,
+      "class_coefficients": {
+        "Dining": -0.3491680013281157,
+        "Entertainment": -0.29069608773505445,
+        "Groceries": 2.6113165959337588,
+        "Rent/Mortgage": -0.22693475599993304,
+        "Salary/Income": -0.21912654209792387,
+        "Shopping": -0.300260998013781,
+        "Subscriptions": -0.36523591904831526,
+        "Transfers": -0.24906452184395517,
+        "Transport": -0.30365433376392303,
+        "Utilities": -0.30717543610275927
+      }
+    },
+    {
+      "token": "event",
+      "mean_abs_coef": 0.5218644161558689,
+      "class_coefficients": {
+        "Dining": -0.3417722299237325,
+        "Entertainment": 2.609322080779343,
+        "Groceries": -0.35953180951092434,
+        "Rent/Mortgage": -0.21460043121525776,
+        "Salary/Income": -0.20736970342340233,
+        "Shopping": -0.2942690471343557,
+        "Subscriptions": -0.3580214655265287,
+        "Transfers": -0.2385551373969795,
+        "Transport": -0.2966870284182325,
+        "Utilities": -0.29851522822993154
+      }
+    },
+    {
+      "token": "dominos",
+      "mean_abs_coef": 0.519309797146446,
+      "class_coefficients": {
+        "Dining": 2.596548985732229,
+        "Entertainment": -0.2871410776019135,
+        "Groceries": -0.4341042699212896,
+        "Rent/Mortgage": -0.20845855859943807,
+        "Salary/Income": -0.19356675881474533,
+        "Shopping": -0.31892801034358725,
+        "Subscriptions": -0.3192570633091424,
+        "Transfers": -0.22036800183597205,
+        "Transport": -0.3338969111173819,
+        "Utilities": -0.2808283341887608
+      }
+    }
+  ],
+  "class_priors": {
+    "Groceries": 0.14066666666666666,
+    "Transport": 0.10333333333333333,
+    "Dining": 0.101,
+    "Utilities": 0.08333333333333333,
+    "Entertainment": 0.07466666666666667,
+    "Shopping": 0.14866666666666667,
+    "Rent/Mortgage": 0.07066666666666667,
+    "Salary/Income": 0.06366666666666666,
+    "Transfers": 0.11066666666666666,
+    "Subscriptions": 0.10333333333333333
+  },
+  "lr_intercept": {
+    "Dining": 0.24987835704131758,
+    "Entertainment": -0.008034224826920707,
+    "Groceries": 0.31875039157241225,
+    "Rent/Mortgage": -0.37543238411319,
+    "Salary/Income": -0.41771056098537673,
+    "Shopping": 0.048268863409631504,
+    "Subscriptions": 0.32629957491777695,
+    "Transfers": -0.25890515093569927,
+    "Transport": 0.04360534562380391,
+    "Utilities": 0.0732797882951656
+  },
+  "samples": [
+    {
+      "description": "faster payment from acme ltd salary ref87227",
+      "true_category": "Salary/Income",
+      "lr_predicted": "Salary/Income",
+      "lr_confidence": 0.923580304961603,
+      "rf_predicted": "Salary/Income",
+      "rf_confidence": 0.8832695436722099
+    },
+    {
+      "description": "Playstation Network",
+      "true_category": "Entertainment",
+      "lr_predicted": "Entertainment",
+      "lr_confidence": 0.9303088995850649,
+      "rf_predicted": "Entertainment",
+      "rf_confidence": 0.32656861308781693
+    },
+    {
+      "description": "marks&spencer fo",
+      "true_category": "Groceries",
+      "lr_predicted": "Groceries",
+      "lr_confidence": 0.8688244830969711,
+      "rf_predicted": "Subscriptions",
+      "rf_confidence": 0.15467219844612268
+    },
+    {
+      "description": "ZARA.COM UK REF16759",
+      "true_category": "Shopping",
+      "lr_predicted": "Shopping",
+      "lr_confidence": 0.9515747754588018,
+      "rf_predicted": "Shopping",
+      "rf_confidence": 0.5183414886560641
+    },
+    {
+      "description": "MORRISONS BRISTOL 9807",
+      "true_category": "Groceries",
+      "lr_predicted": "Groceries",
+      "lr_confidence": 0.9593123814458979,
+      "rf_predicted": "Groceries",
+      "rf_confidence": 0.22983846919720333
+    },
+    {
+      "description": "DWP UNIVERSAL CREDI",
+      "true_category": "Salary/Income",
+      "lr_predicted": "Salary/Income",
+      "lr_confidence": 0.844085235449192,
+      "rf_predicted": "Salary/Income",
+      "rf_confidence": 0.4667632697023077
+    },
+    {
+      "description": "JOHN LEWIS EDINBURGH",
+      "true_category": "Shopping",
+      "lr_predicted": "Shopping",
+      "lr_confidence": 0.9468358525280242,
+      "rf_predicted": "Shopping",
+      "rf_confidence": 0.2479293777389046
+    },
+    {
+      "description": "Primark Liverpool",
+      "true_category": "Shopping",
+      "lr_predicted": "Shopping",
+      "lr_confidence": 0.8673925480634183,
+      "rf_predicted": "Subscriptions",
+      "rf_confidence": 0.15416314519370594
+    },
+    {
+      "description": "Transfer To # Taylor",
+      "true_category": "Transfers",
+      "lr_predicted": "Transfers",
+      "lr_confidence": 0.9658172354391985,
+      "rf_predicted": "Transfers",
+      "rf_confidence": 0.9108999528919839
+    },
+    {
+      "description": "Zara.Com Uk",
+      "true_category": "Shopping",
+      "lr_predicted": "Shopping",
+      "lr_confidence": 0.9515747754588018,
+      "rf_predicted": "Shopping",
+      "rf_confidence": 0.5183414886560641
+    },
+    {
+      "description": "TFL TRAVEL",
+      "true_category": "Transport",
+      "lr_predicted": "Transport",
+      "lr_confidence": 0.868264865260726,
+      "rf_predicted": "Transport",
+      "rf_confidence": 0.29421292776669533
+    },
+    {
+      "description": "Ikea Ltd Manc#ester Ref31490",
+      "true_category": "Shopping",
+      "lr_predicted": "Shopping",
+      "lr_confidence": 0.8883190460310939,
+      "rf_predicted": "Shopping",
+      "rf_confidence": 0.5644773127076587
+    },
+    {
+      "description": "HOMELET RENT GUARANTEE",
+      "true_category": "Rent/Mortgage",
+      "lr_predicted": "Rent/Mortgage",
+      "lr_confidence": 0.9400877113197038,
+      "rf_predicted": "Rent/Mortgage",
+      "rf_confidence": 0.8615661439390945
+    },
+    {
+      "description": "THE GYM GROUP 2378",
+      "true_category": "Entertainment",
+      "lr_predicted": "Entertainment",
+      "lr_confidence": 0.9167402134901277,
+      "rf_predicted": "Entertainment",
+      "rf_confidence": 0.6284761106007171
+    },
+    {
+      "description": "FASTER PAYMENT FROM PIVOT I",
+      "true_category": "Salary/Income",
+      "lr_predicted": "Salary/Income",
+      "lr_confidence": 0.7295370716693792,
+      "rf_predicted": "Salary/Income",
+      "rf_confidence": 0.4888051420351403
+    }
+  ],
+  "per_category_f1_comparison": [
+    {
+      "category": "Groceries",
+      "lr_f1": 0.9928571428571429,
+      "rf_f1": 0.9708029197080292
+    },
+    {
+      "category": "Transport",
+      "lr_f1": 0.9901960784313726,
+      "rf_f1": 0.8924731182795699
+    },
+    {
+      "category": "Dining",
+      "lr_f1": 0.9900990099009901,
+      "rf_f1": 0.9319371727748691
+    },
+    {
+      "category": "Utilities",
+      "lr_f1": 1.0,
+      "rf_f1": 0.9878048780487805
+    },
+    {
+      "category": "Entertainment",
+      "lr_f1": 0.9726027397260274,
+      "rf_f1": 0.9726027397260274
+    },
+    {
+      "category": "Shopping",
+      "lr_f1": 0.9833887043189369,
+      "rf_f1": 0.9361702127659575
+    },
+    {
+      "category": "Rent/Mortgage",
+      "lr_f1": 1.0,
+      "rf_f1": 0.9635036496350365
+    },
+    {
+      "category": "Salary/Income",
+      "lr_f1": 0.9841269841269841,
+      "rf_f1": 0.9841269841269841
+    },
+    {
+      "category": "Transfers",
+      "lr_f1": 0.9910714285714286,
+      "rf_f1": 0.9910714285714286
+    },
+    {
+      "category": "Subscriptions",
+      "lr_f1": 0.9665071770334929,
+      "rf_f1": 0.762962962962963
+    }
+  ]
+}
