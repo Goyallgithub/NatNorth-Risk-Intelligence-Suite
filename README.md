@@ -34,4 +34,4 @@ npm run train
 
 ## Author
 
-Bhavya Goyal
+Bhavya Goyal · [ML Colab](https://colab.research.google.com/drive/1IHuuetR6fhth8NbpHAeumj3QKwmqQeA5?usp=sharing) · [GitHub](https://github.com/Goyallgithub)
