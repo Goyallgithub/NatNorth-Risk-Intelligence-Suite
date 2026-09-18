@@ -16,8 +16,7 @@ export type VoiceResult = {
 type Bubble = { role: "assistant" | "user"; text: string };
 type Phase = "idle" | "listening" | "thinking" | "speaking";
 
-const OPENING =
-  "Hmm — hey. I'm NatNorth voice check. What payment are you trying to make?";
+const OPENING = "Hey — I'm NatNorth voice check. What payment are you trying to make?";
 
 function browserSpeak(text: string): Promise<void> {
   return new Promise((resolve) => {
@@ -28,7 +27,7 @@ function browserSpeak(text: string): Promise<void> {
       }
       window.speechSynthesis.cancel();
       const u = new SpeechSynthesisUtterance(text);
-      u.rate = 0.98;
+      u.rate = 1.28;
       let settled = false;
       const done = () => {
         if (settled) return;
@@ -38,8 +37,7 @@ function browserSpeak(text: string): Promise<void> {
       u.onend = done;
       u.onerror = done;
       window.speechSynthesis.speak(u);
-      // Hard timeout so we never hang
-      setTimeout(done, Math.min(20000, 1500 + text.length * 60));
+      setTimeout(done, Math.min(12000, 900 + text.length * 35));
     } catch {
       resolve();
     }
@@ -129,7 +127,7 @@ export function VoiceOrb({ onResult }: { onResult: (r: VoiceResult) => void }) {
 
     try {
       const controller = new AbortController();
-      const timer = setTimeout(() => controller.abort(), 20000);
+      const timer = setTimeout(() => controller.abort(), 12000);
       const res = await fetch("/api/voice-speak", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -145,6 +143,7 @@ export function VoiceOrb({ onResult }: { onResult: (r: VoiceResult) => void }) {
           const url = URL.createObjectURL(blob);
           audioUrlRef.current = url;
           const audio = new Audio(url);
+          audio.playbackRate = 1.22;
           audioRef.current = audio;
           await new Promise<void>((resolve) => {
             let settled = false;
@@ -156,7 +155,7 @@ export function VoiceOrb({ onResult }: { onResult: (r: VoiceResult) => void }) {
             audio.onended = done;
             audio.onerror = done;
             audio.play().catch(done);
-            setTimeout(done, 30000);
+            setTimeout(done, 18000);
           });
           if (alive.current) setPhaseSafe("idle");
           return;
@@ -230,10 +229,10 @@ export function VoiceOrb({ onResult }: { onResult: (r: VoiceResult) => void }) {
     if (busy.current) return;
     busy.current = true;
     setPhaseSafe("thinking");
-    if (alive.current) setCaption("Hmm — one second…");
+    if (alive.current) setCaption("One second…");
     try {
       if (!blob || blob.size < 64) {
-        const msg = "Hmm — I didn't catch that. Tap and try again?";
+        const msg = "Didn't catch that — tap and try again?";
         if (alive.current) setCaption(msg);
         await speak(msg);
         return;
@@ -256,7 +255,7 @@ export function VoiceOrb({ onResult }: { onResult: (r: VoiceResult) => void }) {
       pushResult(json, json.transcript);
       await speak(msg);
     } catch {
-      const msg = "Hmm — glitch on my side. Tap the orb and say that again.";
+      const msg = "Glitch on my side — tap and say that again.";
       if (alive.current) {
         setCaption(msg);
         setError(null);

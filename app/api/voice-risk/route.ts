@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { calibrateLinguisticRisk, deriveFlagsFromText } from "@/lib/voice-risk";
 
 export const runtime = "nodejs";
 
@@ -14,46 +15,23 @@ Return ONLY valid JSON with these exact keys:
   "overall_linguistic_risk_score": number,
   "one_line_reasoning": string
 }
-Rules:
-- urgency_language: true if rushed / "right now" / "today only" / deadline pressure
-- third_party_coaching_language: true if someone else is telling them what to say/do ("he told me", "they said")
-- mentions_gift_card_or_crypto: true if gift cards, Bitcoin, crypto, or similar irreversible rails
-- mentions_remote_access: true if AnyDesk, TeamViewer, remote desktop, screen share to stranger
-- secrecy_language: true if "don't tell the bank", "keep this secret", "don't talk to staff"
-- overall_linguistic_risk_score: integer 0-100 reflecting combined social-engineering risk
-- one_line_reasoning: one concise sentence
-If the transcript is empty, unclear, or unrelated to a payment, set score low and flags false.`;
+Scoring: stranger payee ≥45; secrecy +20; urgency +15; coaching +25; gift/crypto +25; remote +30. Stack signals. Never return single-digit scores when clear fraud cues are present.`;
 
 async function transcribe(audio: Blob, apiKey: string): Promise<string> {
-  const form = new FormData();
-  form.append("file", audio, "audio.webm");
-  form.append("model", "gpt-4o-transcribe");
-
-  const res = await fetch("https://api.openai.com/v1/audio/transcriptions", {
-    method: "POST",
-    headers: { Authorization: `Bearer ${apiKey}` },
-    body: form,
-  });
-
-  if (!res.ok) {
-    // Fallback for accounts without gpt-4o-transcribe
-    const form2 = new FormData();
-    form2.append("file", audio, "audio.webm");
-    form2.append("model", "whisper-1");
-    const res2 = await fetch("https://api.openai.com/v1/audio/transcriptions", {
+  for (const model of ["whisper-1", "gpt-4o-transcribe"] as const) {
+    const form = new FormData();
+    form.append("file", audio, "audio.webm");
+    form.append("model", model);
+    const res = await fetch("https://api.openai.com/v1/audio/transcriptions", {
       method: "POST",
       headers: { Authorization: `Bearer ${apiKey}` },
-      body: form2,
+      body: form,
     });
-    if (!res2.ok) {
-      const err = await res2.text();
-      throw new Error(`Transcription failed: ${err}`);
-    }
-    const data2 = await res2.json();
-    return (data2.text as string) || "";
+    if (!res.ok) continue;
+    const data = await res.json();
+    return (data.text as string) || "";
   }
-  const data = await res.json();
-  return (data.text as string) || "";
+  throw new Error("Transcription failed");
 }
 
 async function extractSignals(transcript: string, apiKey: string) {
@@ -64,8 +42,9 @@ async function extractSignals(transcript: string, apiKey: string) {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      model: "gpt-4o",
+      model: "gpt-4o-mini",
       temperature: 0,
+      max_tokens: 200,
       response_format: { type: "json_object" },
       messages: [
         { role: "system", content: SYSTEM_PROMPT },
@@ -104,19 +83,18 @@ export async function POST(req: NextRequest) {
 
     const transcript = await transcribe(audio, apiKey);
     const signals = await extractSignals(transcript, apiKey);
+    const flags = deriveFlagsFromText(transcript, signals);
+    const calibrated = calibrateLinguisticRisk(
+      Number(signals.overall_linguistic_risk_score) || 0,
+      flags,
+      transcript
+    );
 
     return NextResponse.json({
       transcript,
-      urgency_language: !!signals.urgency_language,
-      third_party_coaching_language: !!signals.third_party_coaching_language,
-      mentions_gift_card_or_crypto: !!signals.mentions_gift_card_or_crypto,
-      mentions_remote_access: !!signals.mentions_remote_access,
-      secrecy_language: !!signals.secrecy_language,
-      overall_linguistic_risk_score: Math.max(
-        0,
-        Math.min(100, Number(signals.overall_linguistic_risk_score) || 0)
-      ),
-      one_line_reasoning: String(signals.one_line_reasoning || ""),
+      ...flags,
+      overall_linguistic_risk_score: calibrated.score,
+      one_line_reasoning: String(signals.one_line_reasoning || calibrated.reasoning),
     });
   } catch (e) {
     console.error(e);

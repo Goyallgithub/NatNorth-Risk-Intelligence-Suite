@@ -1,21 +1,32 @@
 import { NextRequest, NextResponse } from "next/server";
+import { calibrateLinguisticRisk, deriveFlagsFromText } from "@/lib/voice-risk";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 type Msg = { role: "user" | "assistant"; content: string };
 
-const SYSTEM = `You are NatNorth Voice Intent Guard — a warm, premium banking fraud verification agent on a live voice call.
-You ALWAYS lead: ask the next question. Goal: gently discover APP / social-engineering fraud risk.
+const SYSTEM = `You are NatNorth Voice Intent Guard — a sharp banking fraud verification agent on a live voice call.
+You ALWAYS lead with the next question. Detect APP / social-engineering fraud risk.
 
-Write assistant_message exactly as it should be spoken aloud:
-- 1–2 short sentences max
-- Natural human speech: occasional soft fillers like "hmm,", "um,", "okay so,", "right," — sparingly
-- Contractions: I'll, you're, what's
-- Never robotic. Never name models or APIs.
+SPEECH STYLE (assistant_message):
+- ONE short sentence, max ~18 words. No fillers (no hmm/um/okay so).
+- Direct, warm, fast to speak aloud.
+- Never name models or APIs.
 
-Ask about payment amount, recipient, hurry, coaching, gift cards/crypto, remote access, secrecy.
-After 3–5 exchanges, close with a clear spoken assessment.
+ASK ABOUT: amount, recipient (known?), hurry, coaching, gift cards/crypto, remote access, secrecy.
+After 3–5 exchanges set done=true with a crisp spoken verdict.
+
+RISK SCORE RUBRIC (overall_linguistic_risk_score 0–100) — be decisive for demos:
+- Benign known payee, no pressure: 0–15
+- Sending money to stranger / unknown person: at least 45
+- Secrecy ("don't tell", secret): +20 (stack)
+- Urgency / hurry: +15
+- Third-party coaching: +25
+- Gift cards / crypto: +25
+- Remote access tools: +30
+- Large amount + stranger or secrecy: push into 70–95
+If multiple signals fire, score must reflect them (do NOT return single digits when risk is clear).
 
 Return ONLY valid JSON:
 {
@@ -31,7 +42,7 @@ Return ONLY valid JSON:
 }`;
 
 const FALLBACK = {
-  assistant_message: "Hmm — hey. What payment are you trying to make?",
+  assistant_message: "Hey — what payment are you trying to make?",
   done: false,
   urgency_language: false,
   third_party_coaching_language: false,
@@ -50,27 +61,34 @@ function safeJson<T>(raw: string, fallback: T): T {
   }
 }
 
-function pack(signals: Record<string, unknown>, transcript: string | null) {
-  return {
-    transcript,
-    assistant_message: String(signals.assistant_message || FALLBACK.assistant_message),
-    done: !!signals.done,
+function pack(signals: Record<string, unknown>, transcript: string | null, allUserText: string) {
+  const flags = deriveFlagsFromText(allUserText, {
     urgency_language: !!signals.urgency_language,
     third_party_coaching_language: !!signals.third_party_coaching_language,
     mentions_gift_card_or_crypto: !!signals.mentions_gift_card_or_crypto,
     mentions_remote_access: !!signals.mentions_remote_access,
     secrecy_language: !!signals.secrecy_language,
-    overall_linguistic_risk_score: Math.max(
-      0,
-      Math.min(100, Number(signals.overall_linguistic_risk_score) || 0)
-    ),
-    one_line_reasoning: String(signals.one_line_reasoning || ""),
+  });
+  const calibrated = calibrateLinguisticRisk(
+    Number(signals.overall_linguistic_risk_score) || 0,
+    flags,
+    allUserText
+  );
+
+  return {
+    transcript,
+    assistant_message: String(signals.assistant_message || FALLBACK.assistant_message),
+    done: !!signals.done,
+    ...flags,
+    overall_linguistic_risk_score: calibrated.score,
+    one_line_reasoning: String(signals.one_line_reasoning || calibrated.reasoning),
   };
 }
 
 async function transcribe(audio: Blob, apiKey: string): Promise<string> {
   if (!audio || audio.size < 64) return "";
-  for (const model of ["gpt-4o-transcribe", "whisper-1"] as const) {
+  // whisper-1 first — usually faster than gpt-4o-transcribe
+  for (const model of ["whisper-1", "gpt-4o-transcribe"] as const) {
     try {
       const form = new FormData();
       form.append("file", audio, "audio.webm");
@@ -91,7 +109,8 @@ async function transcribe(audio: Blob, apiKey: string): Promise<string> {
 }
 
 async function converse(messages: Msg[], apiKey: string) {
-  for (const model of ["gpt-4o", "gpt-4.1", "gpt-4o-mini"] as const) {
+  // Faster models first for snappy demo turns
+  for (const model of ["gpt-4o-mini", "gpt-4.1-mini", "gpt-4o"] as const) {
     try {
       const res = await fetch("https://api.openai.com/v1/chat/completions", {
         method: "POST",
@@ -101,7 +120,8 @@ async function converse(messages: Msg[], apiKey: string) {
         },
         body: JSON.stringify({
           model,
-          temperature: 0.55,
+          temperature: 0.35,
+          max_tokens: 220,
           response_format: { type: "json_object" },
           messages: [
             { role: "system", content: SYSTEM },
@@ -128,7 +148,7 @@ export async function POST(req: NextRequest) {
     const apiKey = process.env.OPENAI_API_KEY;
     if (!apiKey) {
       return NextResponse.json(
-        { ...pack(FALLBACK, null), error: "Add OPENAI_API_KEY to enable live voice." },
+        { ...pack(FALLBACK, null, ""), error: "Add OPENAI_API_KEY to enable live voice." },
         { status: 200 }
       );
     }
@@ -165,8 +185,7 @@ export async function POST(req: NextRequest) {
       userText = "";
     }
 
-    // Cap history so payloads never explode
-    if (history.length > 16) history = history.slice(-16);
+    if (history.length > 12) history = history.slice(-12);
 
     const messages: Msg[] = [...history];
     if (userText) {
@@ -175,24 +194,34 @@ export async function POST(req: NextRequest) {
       messages.push({
         role: "user",
         content:
-          "[session_start] Greet me warmly in one short line with a soft hmm, then ask your first payment-safety question.",
+          "[session_start] Greet in one short line, then ask what payment they want to make. No fillers.",
       });
     } else if (!userText) {
       return NextResponse.json(
         pack(
           {
             ...FALLBACK,
-            assistant_message: "Hmm — I didn't catch that. Could you say that again?",
+            assistant_message: "I didn't catch that — say it again?",
           },
-          null
+          null,
+          history
+            .filter((m) => m.role === "user")
+            .map((m) => m.content)
+            .join(" ")
         )
       );
     }
 
+    const priorUser = history
+      .filter((m) => m.role === "user")
+      .map((m) => m.content)
+      .join(" ");
+    const allUserText = [priorUser, userText].filter(Boolean).join(" ");
+
     const signals = await converse(messages, apiKey);
-    return NextResponse.json(pack(signals, userText || null));
+    return NextResponse.json(pack(signals, userText || null, allUserText));
   } catch (e) {
     console.error("[voice-chat]", e);
-    return NextResponse.json(pack(FALLBACK, null), { status: 200 });
+    return NextResponse.json(pack(FALLBACK, null, ""), { status: 200 });
   }
 }
