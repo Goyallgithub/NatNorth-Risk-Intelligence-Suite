@@ -16,7 +16,7 @@ export type VoiceResult = {
 type Bubble = { role: "assistant" | "user"; text: string };
 type Phase = "idle" | "listening" | "thinking" | "speaking";
 
-const OPENING = "Hey — I'm NatNorth voice check. What payment are you trying to make?";
+const OPENING = "Hi — I'm NatNorth voice check. What payment are you trying to make?";
 
 function browserSpeak(text: string): Promise<void> {
   return new Promise((resolve) => {
@@ -27,7 +27,7 @@ function browserSpeak(text: string): Promise<void> {
       }
       window.speechSynthesis.cancel();
       const u = new SpeechSynthesisUtterance(text);
-      u.rate = 1.28;
+      u.rate = 1.0;
       let settled = false;
       const done = () => {
         if (settled) return;
@@ -37,11 +37,18 @@ function browserSpeak(text: string): Promise<void> {
       u.onend = done;
       u.onerror = done;
       window.speechSynthesis.speak(u);
-      setTimeout(done, Math.min(12000, 900 + text.length * 35));
+      setTimeout(done, Math.min(16000, 1200 + text.length * 55));
     } catch {
       resolve();
     }
   });
+}
+
+function b64ToBlob(b64: string, type = "audio/mpeg"): Blob {
+  const bin = atob(b64);
+  const bytes = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+  return new Blob([bytes], { type });
 }
 
 export function VoiceOrb({ onResult }: { onResult: (r: VoiceResult) => void }) {
@@ -58,6 +65,7 @@ export function VoiceOrb({ onResult }: { onResult: (r: VoiceResult) => void }) {
   const busy = useRef(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const audioUrlRef = useRef<string | null>(null);
+  const openingUrl = useRef<string | null>(null);
   const mediaRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
   const streamRef = useRef<MediaStream | null>(null);
@@ -70,7 +78,7 @@ export function VoiceOrb({ onResult }: { onResult: (r: VoiceResult) => void }) {
     if (alive.current) setPhase(p);
   };
 
-  const stopPlayback = () => {
+  const stopPlayback = useCallback(() => {
     try {
       if (audioRef.current) {
         audioRef.current.onended = null;
@@ -87,9 +95,9 @@ export function VoiceOrb({ onResult }: { onResult: (r: VoiceResult) => void }) {
     } catch {
       /* ignore */
     }
-  };
+  }, []);
 
-  const stopTracks = () => {
+  const stopTracks = useCallback(() => {
     try {
       cancelAnimationFrame(rafRef.current);
       streamRef.current?.getTracks().forEach((t) => {
@@ -108,73 +116,121 @@ export function VoiceOrb({ onResult }: { onResult: (r: VoiceResult) => void }) {
     } catch {
       /* ignore */
     }
-  };
+  }, []);
 
+  const playBlob = useCallback(
+    async (blob: Blob) => {
+      if (!alive.current || blob.size < 32) return;
+      stopPlayback();
+      setPhaseSafe("speaking");
+      const url = URL.createObjectURL(blob);
+      audioUrlRef.current = url;
+      const audio = new Audio(url);
+      audio.playbackRate = 1.0;
+      audioRef.current = audio;
+      await new Promise<void>((resolve) => {
+        let settled = false;
+        const done = () => {
+          if (settled) return;
+          settled = true;
+          resolve();
+        };
+        audio.onended = done;
+        audio.onerror = done;
+        audio.play().catch(done);
+        setTimeout(done, 20000);
+      });
+      if (alive.current) setPhaseSafe("idle");
+    },
+    [stopPlayback]
+  );
+
+  const playText = useCallback(
+    async (text: string, inlineB64?: string | null, preferCache?: string | null) => {
+      if (!text || !alive.current) return;
+      setPhaseSafe("speaking");
+
+      if (preferCache) {
+        try {
+          await playBlob(await fetch(preferCache).then((r) => r.blob()));
+          return;
+        } catch {
+          /* fall through */
+        }
+      }
+
+      if (inlineB64) {
+        try {
+          await playBlob(b64ToBlob(inlineB64));
+          return;
+        } catch {
+          /* fall through */
+        }
+      }
+
+      try {
+        const res = await fetch("/api/voice-speak", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ text }),
+        });
+        const type = res.headers.get("content-type") || "";
+        if (res.ok && type.includes("audio")) {
+          const blob = await res.blob();
+          if (blob.size > 0) {
+            await playBlob(blob);
+            return;
+          }
+        }
+      } catch {
+        /* browser fallback */
+      }
+
+      await browserSpeak(text);
+      if (alive.current) setPhaseSafe("idle");
+    },
+    [playBlob]
+  );
+
+  // Prefetch opening audio while idle — first tap speaks immediately
   useEffect(() => {
     alive.current = true;
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch("/api/voice-speak", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ text: OPENING }),
+        });
+        if (!res.ok || cancelled) return;
+        const blob = await res.blob();
+        if (blob.size < 32 || cancelled) return;
+        openingUrl.current = URL.createObjectURL(blob);
+      } catch {
+        /* optional */
+      }
+    })();
+
     return () => {
+      cancelled = true;
       alive.current = false;
       busy.current = false;
       stopTracks();
       stopPlayback();
-    };
-  }, []);
-
-  const speak = useCallback(async (text: string) => {
-    if (!text || !alive.current) return;
-    setPhaseSafe("speaking");
-    stopPlayback();
-
-    try {
-      const controller = new AbortController();
-      const timer = setTimeout(() => controller.abort(), 12000);
-      const res = await fetch("/api/voice-speak", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ text }),
-        signal: controller.signal,
-      });
-      clearTimeout(timer);
-
-      const type = res.headers.get("content-type") || "";
-      if (res.ok && type.includes("audio")) {
-        const blob = await res.blob();
-        if (blob.size > 0 && alive.current) {
-          const url = URL.createObjectURL(blob);
-          audioUrlRef.current = url;
-          const audio = new Audio(url);
-          audio.playbackRate = 1.22;
-          audioRef.current = audio;
-          await new Promise<void>((resolve) => {
-            let settled = false;
-            const done = () => {
-              if (settled) return;
-              settled = true;
-              resolve();
-            };
-            audio.onended = done;
-            audio.onerror = done;
-            audio.play().catch(done);
-            setTimeout(done, 18000);
-          });
-          if (alive.current) setPhaseSafe("idle");
-          return;
-        }
+      if (openingUrl.current) {
+        URL.revokeObjectURL(openingUrl.current);
+        openingUrl.current = null;
       }
-    } catch {
-      /* fall through to browser TTS */
-    }
-
-    await browserSpeak(text);
-    if (alive.current) setPhaseSafe("idle");
-  }, []);
+    };
+  }, [stopPlayback, stopTracks]);
 
   const pushResult = (json: Record<string, unknown>, transcript?: string) => {
     try {
       const s = Math.max(0, Math.min(100, Number(json.overall_linguistic_risk_score) || 0));
       if (alive.current) setScore(s);
       onResult({
-        transcript: transcript || String(json.assistant_message || ""),
+        transcript: transcript || String(json.transcript || ""),
         urgency_language: !!json.urgency_language,
         third_party_coaching_language: !!json.third_party_coaching_language,
         mentions_gift_card_or_crypto: !!json.mentions_gift_card_or_crypto,
@@ -191,34 +247,14 @@ export function VoiceOrb({ onResult }: { onResult: (r: VoiceResult) => void }) {
   const startSession = async () => {
     if (busy.current || !alive.current) return;
     busy.current = true;
-    setPhaseSafe("thinking");
     if (alive.current) {
       setError(null);
-      setCaption("Warming up…");
+      setBooted(true);
+      setCaption(OPENING);
     }
+    history.current = [{ role: "assistant", text: OPENING }];
     try {
-      const res = await fetch("/api/voice-chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ history: [], text: "" }),
-      });
-      const json = await res.json().catch(() => ({}));
-      const msg = String(json.assistant_message || OPENING);
-      history.current = [{ role: "assistant", text: msg }];
-      if (alive.current) {
-        setBooted(true);
-        setCaption(msg);
-        if (json.error) setError(String(json.error));
-      }
-      await speak(msg);
-    } catch {
-      history.current = [{ role: "assistant", text: OPENING }];
-      if (alive.current) {
-        setBooted(true);
-        setCaption(OPENING);
-        setError(null);
-      }
-      await speak(OPENING);
+      await playText(OPENING, null, openingUrl.current);
     } finally {
       busy.current = false;
       if (alive.current && phaseRef.current !== "speaking") setPhaseSafe("idle");
@@ -229,38 +265,45 @@ export function VoiceOrb({ onResult }: { onResult: (r: VoiceResult) => void }) {
     if (busy.current) return;
     busy.current = true;
     setPhaseSafe("thinking");
-    if (alive.current) setCaption("One second…");
+    if (alive.current) setCaption("Got it…");
+
     try {
       if (!blob || blob.size < 64) {
         const msg = "Didn't catch that — tap and try again?";
         if (alive.current) setCaption(msg);
-        await speak(msg);
+        await playText(msg);
         return;
       }
+
       const fd = new FormData();
       fd.append("audio", blob, `rec.${mime.includes("webm") ? "webm" : "mp4"}`);
       fd.append(
         "history",
         JSON.stringify(history.current.map((b) => ({ role: b.role, content: b.text })))
       );
-      const res = await fetch("/api/voice-chat", { method: "POST", body: fd });
+
+      const res = await fetch("/api/voice-turn", { method: "POST", body: fd });
       const json = await res.json().catch(() => ({}));
-      const msg = String(json.assistant_message || "Okay — tell me a bit more?");
+      const msg = String(json.assistant_message || "Tell me a bit more?");
+
       if (json.transcript) {
         history.current.push({ role: "user", text: String(json.transcript) });
       }
       history.current.push({ role: "assistant", text: msg });
       if (history.current.length > 16) history.current = history.current.slice(-16);
+
+      // Text + risk first (no gap waiting for a second speak request)
       if (alive.current) setCaption(msg);
-      pushResult(json, json.transcript);
-      await speak(msg);
+      pushResult(json, json.transcript ? String(json.transcript) : undefined);
+
+      await playText(msg, json.audio_base64 ? String(json.audio_base64) : null);
     } catch {
-      const msg = "Glitch on my side — tap and say that again.";
+      const msg = "Something glitched — tap and say that again?";
       if (alive.current) {
         setCaption(msg);
         setError(null);
       }
-      await speak(msg);
+      await playText(msg);
     } finally {
       busy.current = false;
       if (alive.current && phaseRef.current !== "speaking") setPhaseSafe("idle");
@@ -341,7 +384,7 @@ export function VoiceOrb({ onResult }: { onResult: (r: VoiceResult) => void }) {
         void sendAudio(out, type);
       };
       mediaRef.current = recorder;
-      recorder.start(250);
+      recorder.start(200);
       setPhaseSafe("listening");
       if (alive.current) setCaption("Listening… tap again when you're done.");
     } catch {
@@ -381,7 +424,7 @@ export function VoiceOrb({ onResult }: { onResult: (r: VoiceResult) => void }) {
     phase === "listening"
       ? "Listening"
       : phase === "thinking"
-        ? "Thinking"
+        ? "Working"
         : phase === "speaking"
           ? "Speaking"
           : "Tap to talk";
@@ -456,7 +499,7 @@ export function VoiceOrb({ onResult }: { onResult: (r: VoiceResult) => void }) {
       {error && <p className="px-4 text-center text-xs text-[var(--bp-red)]">{error}</p>}
 
       <p className="text-[10px] uppercase tracking-[0.18em] text-white/35">
-        {phase === "listening" ? "Tap orb to send" : "Tap orb · OpenAI voice"}
+        {phase === "listening" ? "Tap orb to send" : "Tap orb · natural voice"}
       </p>
     </div>
   );
